@@ -10,7 +10,7 @@ public class LockCamera : MonoBehaviour
     {
 		if (focus)
 		{
-            transform.position = new Vector3(focusObject.Position.x, transform.position.y, focusObject.Position.z);
+            transform.position = new Vector3(focusObject.transform.position.x, transform.position.y, focusObject.transform.position.z);
 		}
     }
 }

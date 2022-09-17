@@ -1,93 +1,101 @@
+using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Unit", menuName = "Unit")]
-public class Unit : ScriptableObject
-{
-	public string unitName;
-	public string[] units;              // names of units from biggest to smallest
-	public float[] conversionRates;     // what number should we multiply the number with in order to get a smaller unit
-	[Min(0)] public int defaultUnit;    // index of the default unit
-}
-
-[System.Serializable]
+[Serializable]
 public class Quantity
 {
 	public float amount; //{ get; private set; }
-	public Unit unitType; //{ get; private set; }
-	public int unit { get; private set; }       // index of the unit
+	public Length.Unit Unit;
+	/// <summary>
+	/// Determines whether the measurement unit can be changed.
+	/// </summary>
+	public bool isStatic;
 
-	public Quantity(float amount, Unit unitType)
+	public Quantity(float amount)
 	{
 		this.amount = amount;
-		this.unitType = unitType;
-		unit = unitType.defaultUnit;
+		Unit = Length.defaultUnit;
 	}
-	public Quantity(float amount, Unit unitType, int unit)
+	public Quantity(float amount, Length.Unit unit, bool isStatic = false)
 	{
 		this.amount = amount;
-		this.unitType = unitType;
-		this.unit = unit;
+		Unit = unit;
+		this.isStatic = isStatic;
 	}
 
 	public string ConvertToString()
 	{
 		string output = amount.ToString();
-		output += " " + unitType.units[unit];
+		output += " " + Enum.GetName(typeof(Length.Unit), Unit);
 		return output;
 	}
 
-	public void Convert(int unit)
+	public void Convert(Length.Unit unit)
 	{
-		Quantity newQuantity = UnitConverter.Convert(this, unit);
+		if (isStatic) return;
+		Quantity newQuantity = Length.Convert(this, unit);
 		this.amount = newQuantity.amount;
-		this.unit = newQuantity.unit;
-		this.unitType = newQuantity.unitType;
+		Unit = newQuantity.Unit;
 	}
-
 
 	#region Operators
-	/// <summary>
-	/// Multiply two quantities
-	/// </summary>
-	/// <returns>The multiple in the first quantity's unit</returns>
-	public static float operator *(Quantity a, Quantity b)
+	#region Quantity operations
+	public static Quantity operator *(Quantity a, Quantity b)
 	{
-		if (a.unitType == b.unitType)
+		Quantity q = new Quantity(a.amount, a.Unit);
+		if (a.Unit == b.Unit)
 		{
-			if (a.unit == b.unit)
-			{
-				return a.amount * b.amount;
-			}
-			else
-			{
-				return a.amount * UnitConverter.Convert(b, a.unit);
-			}
+			q.amount *= b.amount;
 		}
 		else
 		{
-			Debug.LogWarning("Attempted the multiplication of two non-mathcing unit types");
-			return -1;
+			q.amount *= Length.Convert(b, a.Unit).amount;
 		}
+		return q;
 	}
-	public static float operator /(Quantity a, Quantity b)
+	public static Quantity operator /(Quantity a, Quantity b)
 	{
-		if (a.unitType == b.unitType)
+		Quantity q = new Quantity(a.amount, a.Unit);
+		if (a.Unit == b.Unit)
 		{
-			if (a.unit == b.unit)
-			{
-				return a.amount / b.amount;
-			}
-			else
-			{
-				return a.amount / UnitConverter.Convert(b, a.unit);
-			}
+			q.amount /= b.amount;
 		}
 		else
 		{
-			Debug.LogWarning("Attempted the division of two non-mathcing unit types");
-			return -1;
+			q.amount /= Length.Convert(b, a.Unit).amount;
 		}
+		return q;
 	}
+
+	public static Quantity operator +(Quantity a, Quantity b)
+	{
+		Quantity q = new Quantity(a.amount, a.Unit);
+		if (a.Unit == b.Unit)
+		{
+			q.amount += b.amount;
+		}
+		else
+		{
+			q.amount += Length.Convert(b, a.Unit).amount;
+		}
+		return q;
+	}
+	public static Quantity operator -(Quantity a, Quantity b)
+	{
+		Quantity q = new Quantity(a.amount, a.Unit);
+		if (a.Unit == b.Unit)
+		{
+			q.amount -= b.amount;
+		}
+		else
+		{
+			q.amount -= Length.Convert(b, a.Unit).amount;
+		}
+		return q;
+	}
+	#endregion
+
+	#region float operations
 	public static float operator *(Quantity a, float b)
 	{
 		return a.amount * b;
@@ -104,67 +112,72 @@ public class Quantity
 	{
 		return a / b.amount;
 	}
+	#endregion
 
-	public static float operator +(Quantity a, Quantity b)
+	#region booleans
+	public static bool operator >(Quantity a, Quantity b)
 	{
-		if (a.unitType == b.unitType)
+		if (a.Unit == b.Unit)
 		{
-			if (a.unit == b.unit)
-			{
-				return a.amount + b.amount;
-			}
-			else
-			{
-				return a.amount + UnitConverter.Convert(b, a.unit).amount;
-			}
+			return a.amount > b.amount;
 		}
 		else
 		{
-			Debug.LogWarning("Attempted the sum of two non-mathcing unit types");
-			return -1;
+			return a.amount > Length.Convert(b, a.Unit).amount;
 		}
 	}
-	public static float operator -(Quantity a, Quantity b)
+	public static bool operator <(Quantity a, Quantity b)
 	{
-		if (a.unitType == b.unitType)
+		if (a.Unit == b.Unit)
 		{
-			if (a.unit == b.unit)
-			{
-				return a.amount - b.amount;
-			}
-			else
-			{
-				return a.amount - UnitConverter.Convert(b, a.unit).amount;
-			}
+			return a.amount < b.amount;
 		}
 		else
 		{
-			Debug.LogWarning("Attempted the subtraction of two non-mathcing unit types");
-			return -1;
+			return a.amount < Length.Convert(b, a.Unit).amount;
 		}
 	}
 	#endregion
+	#endregion
 }
 
-public static class UnitConverter
+public static class Length
 {
-    public static Quantity Convert(Quantity quantity, int unit)
+	public const string unitName = "length";
+	public static readonly float[] conversionRates = { 1, 1000, 149597871000, 9460730472580000, 30856775812799588 };
+	public enum Unit
 	{
-		Unit unitType = quantity.unitType;
+		m,
+		km,
+		AU,
+		ly,
+		pc
+	}
+	public const Unit defaultUnit = Unit.km;
 
-		if (unit == quantity.unit)
+	public static Quantity Convert(Quantity quantity, Unit unit)
+	{
+		if (unit == quantity.Unit)
 		{
 			Debug.Log("Attempted conversion to same unit");
 			return quantity;
 		}
-		else if (unit > unitType.units.Length || unit < 0)
-		{
-			Debug.LogError("Failed Unit Conversion: unit out of bounds");
-			return quantity;
-		}
 		else
 		{
-			if (unit < quantity.unit)	// convert to a higher unit (m->km)
+			if (quantity.Unit == Unit.m)
+			{
+				float newAmount = quantity / conversionRates[(int)unit];
+				return new Quantity(newAmount, unit);
+			}
+			else
+			{
+				float meter = quantity * conversionRates[(int)quantity.Unit];
+				float newAmount = meter / conversionRates[(int)unit];
+				return new Quantity(newAmount, unit);
+			}
+			/*
+			int steps =  Enum.GetNames(typeof(Unit))
+			if (unit < quantity.unit)   // convert to a higher unit (m->km)
 			{
 				float newAmount = quantity.amount;
 				for (int i = quantity.unit - 1; i >= unit; i--)
@@ -182,26 +195,30 @@ public static class UnitConverter
 				}
 				return new Quantity(newAmount, unitType, unit);
 			}
+			*/
 		}
 	}
+	/// <summary>
+	/// Converts quantity to its world value.
+	/// </summary>
 	public static float ConvertToWorld(Quantity quantity)
 	{
-		Unit unitType = quantity.unitType;
-		if (unitType.unitName != "length")
-		{
-			Debug.LogError("Attempted converting a non-length quantity to world value");
-			return quantity.amount;
-		}
-
-		if (quantity.unit == unitType.defaultUnit)
+		if (quantity.Unit == defaultUnit)
 		{
 			return quantity * Universe.lengthScale;
 		}
 		else
 		{
 			Quantity newQuantity = quantity;
-			quantity.Convert(unitType.defaultUnit);
+			quantity.Convert(defaultUnit);
 			return newQuantity * Universe.lengthScale;
 		}
+	}
+	public static Quantity ConvertFromWorld(float value, Unit unit)
+	{
+		float newValue = value / Universe.lengthScale;
+		Quantity quantity = new Quantity(newValue, Unit.km);
+		quantity.Convert(unit);
+		return quantity;
 	}
 }

@@ -10,7 +10,11 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 /Gravity/[Ll]ibrary/
+/Gravity/[Tt]emp/
+/Gravity/[Uu]ser[Ss]ettings/
 /Solar System Thingy/[Ll]ibrary/
+/Solar System Thingy/[Tt]emp/
+/Solar System Thingy/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

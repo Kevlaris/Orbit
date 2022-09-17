@@ -19,9 +19,9 @@ public class Simulation : MonoBehaviour
     {
         for (int i = 0; i < bodies.Length; i++)
         {
-            Vector3 acceleration = CalculateAcceleration(bodies[i].Position, bodies[i]);
-            bodies[i].UpdateVelocity(acceleration, Universe.physicsTimeStep);
-            //bodies[i].UpdateVelocity (bodies, Universe.physicsTimeStep);
+            //Vector3 acceleration = CalculateAcceleration(bodies[i].Position, bodies[i]);
+            //bodies[i].UpdateVelocity(acceleration, Universe.physicsTimeStep);
+            bodies[i].UpdateVelocity (bodies, Universe.physicsTimeStep);
         }
 
         for (int i = 0; i < bodies.Length; i++)
@@ -38,9 +38,9 @@ public class Simulation : MonoBehaviour
         {
             if (body != ignoreBody)
             {
-                float sqrDst = (body.Position - point).sqrMagnitude;
-                Vector3 forceDir = (body.Position - point).normalized;
-                acceleration += forceDir * Universe.gravitationalConstant * body.mass / sqrDst;
+                float sqrDst = Length.ConvertFromWorld((body.transform.position - point).sqrMagnitude, Length.Unit.m).amount;
+                Vector3 forceDir = (body.transform.position - point).normalized;
+                acceleration += forceDir * Universe.gravitationalConstant * body.mass / Universe.lengthScale / sqrDst;
             }
         }
 

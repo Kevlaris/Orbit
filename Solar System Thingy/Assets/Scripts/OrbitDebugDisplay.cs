@@ -122,8 +122,8 @@ public class OrbitDebugDisplay : MonoBehaviour
                 continue;
             }
             Vector3 forceDir = (virtualBodies[j].position - virtualBodies[i].position).normalized;
-            float sqrDst = (virtualBodies[j].position - virtualBodies[i].position).sqrMagnitude;
-            acceleration += forceDir * Universe.gravitationalConstant * virtualBodies[j].mass / sqrDst;
+            float sqrDst = Length.ConvertFromWorld((virtualBodies[j].position - virtualBodies[i].position).sqrMagnitude, Length.Unit.m).amount;
+            acceleration += forceDir * Universe.gravitationalConstant * virtualBodies[j].mass / Universe.lengthScale / sqrDst;
         }
         return acceleration;
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CelestialBody : MonoBehaviour
 {
-    public float radius;
+    public Quantity radius;
     public float surfaceGravity;
 	public float mass { get; private set; }
     public Vector3 initialVelocity;
@@ -19,11 +19,19 @@ public class CelestialBody : MonoBehaviour
 		rb.mass = mass;
 	}
 
+	private void Reset()
+	{
+		radius.Unit = Length.Unit.km;
+		radius.isStatic = true;
+	}
+
 	void OnValidate()
 	{
-		mass = surfaceGravity * radius * radius / Universe.gravitationalConstant;
+		radius.Unit = Length.Unit.km;
+		radius.isStatic = true;
+		mass = Mathf.Pow(Universe.lengthScale, 3) * (surfaceGravity * Mathf.Pow(Length.Convert(radius, Length.Unit.m).amount, 2) / Universe.gravitationalConstant);
 		meshHolder = transform.GetChild(0);
-		meshHolder.localScale = Vector3.one * radius;
+		meshHolder.localScale = Vector3.one * Length.ConvertToWorld(radius) * 2;
 	}
 
 	public void UpdateVelocity(CelestialBody[] bodies, float timeStep)
@@ -32,10 +40,18 @@ public class CelestialBody : MonoBehaviour
 		{
 			if (body != this)
 			{
-				float distance = Vector3.Distance(transform.position, body.transform.position);
+				/*
+				Quantity distance = Length.ConvertFromWorld(Vector3.Distance(transform.position, body.transform.position), Length.Unit.m);
 				Vector3 forceDir = (body.rb.position - rb.position).normalized;
 
-				Vector3 acceleration = forceDir * Universe.gravitationalConstant * body.mass / distance * distance;
+				Vector3 acceleration = forceDir * Universe.gravitationalConstant * body.mass / Universe.lengthScale / Mathf.Pow(distance.amount, 2);
+				velocity += acceleration * timeStep;
+				*/
+
+				float sqrDst = Length.ConvertFromWorld((body.transform.position - transform.position).sqrMagnitude, Length.Unit.m).amount;
+				Vector3 forceDir = (body.transform.position - transform.position).normalized;
+				Vector3 acceleration = forceDir * Universe.gravitationalConstant * body.mass / Universe.lengthScale / sqrDst;
+
 				velocity += acceleration * timeStep;
 			}
 		}
@@ -48,21 +64,16 @@ public class CelestialBody : MonoBehaviour
 
 	public void UpdatePosition(float timeStep)
 	{
-		//rb.MovePosition(rb.position + velocity * timeStep);
-		rb.velocity = velocity;
-	}
-
-	public Vector3 Position
-	{
-		get { return rb.position; }
+		rb.MovePosition(rb.position + velocity * timeStep);
+		//rb.velocity = velocity;
 	}
 
 	private void OnDrawGizmos()
 	{
 		Gizmos.color = Color.red;
-		Gizmos.DrawLine(transform.position, transform.position + rb.velocity * 100f);
-		if (radius > 500f) return;
+		Gizmos.DrawLine(transform.position, transform.position + rb.velocity * 2.5f);
+		/*if (radius > 500f) return;
 		Gizmos.color = Color.blue;
-		Gizmos.DrawWireSphere(transform.position, radius * 10f);
+		Gizmos.DrawWireSphere(transform.position, radius * 10f);*/
 	}
 }
