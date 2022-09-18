@@ -14,17 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   classificationName: Harvard system
   spectralClasses:
+  - className: Y (Brown Dwarf)
+    letter: Y
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 00000000bc020000
+    solarMass:
+    - 0.012
+    - 0.08
+    solarRadii:
+    - 0.9
+    - 1.1
+    bolometricLuminosity: []
+    bolometricCorrection:
+    - 0
+    - 0
+    chromaticity: {r: 0.31023836, g: 0, b: 0.4716981, a: 0}
   - className: O (Blue-Violet)
     letter: O
-    numberOfTypes: 5
-    firstType: 5
-    temperature: 30750000
+    numberOfTypes: 8
+    firstType: 2
+    temperature: 30750000d8d60000
     solarMass:
     - 16
+    - Infinity
     solarRadii:
     - 6.6
+    - Infinity
     bolometricLuminosity:
     - 30000
+    - Infinity
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.57254905, g: 0.70980394, b: 1, a: 0}
   - className: B (Blue)
     letter: B
@@ -40,6 +62,9 @@ MonoBehaviour:
     bolometricLuminosity:
     - 25
     - 30000
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.63529414, g: 0.75294125, b: 1, a: 0}
   - className: A (White)
     letter: A
@@ -55,6 +80,9 @@ MonoBehaviour:
     bolometricLuminosity:
     - 5
     - 25
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.8352942, g: 0.87843144, b: 1, a: 0}
   - className: F (White-Yellow)
     letter: F
@@ -70,6 +98,9 @@ MonoBehaviour:
     bolometricLuminosity:
     - 1.5
     - 5
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.97647065, g: 0.9607844, b: 1, a: 0}
   - className: G (Yellow)
     letter: G
@@ -85,6 +116,9 @@ MonoBehaviour:
     bolometricLuminosity:
     - 0.6
     - 1.5
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 1, g: 0.9294118, b: 0.89019614, a: 0}
   - className: K (Orange)
     letter: K
@@ -100,6 +134,9 @@ MonoBehaviour:
     bolometricLuminosity:
     - 0.08
     - 0.6
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 1, g: 0.854902, b: 0.70980394, a: 0}
   - className: M (Red)
     letter: M
@@ -115,6 +152,9 @@ MonoBehaviour:
     bolometricLuminosity:
     - 0
     - 0.08
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 1, g: 0.70980394, b: 0.42352945, a: 0}
   - className: L (Brown Dwarf)
     letter: L
@@ -129,6 +169,9 @@ MonoBehaviour:
     - 1.1
     bolometricLuminosity:
     - 0.0000363
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.6415094, g: 0.005749807, b: 0, a: 0}
   - className: T (Brown Dwarf)
     letter: T
@@ -142,6 +185,9 @@ MonoBehaviour:
     - 0.9
     - 1.1
     bolometricLuminosity: []
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.6431373, g: 0, b: 0.40570924, a: 0}
   - className: Y (Brown Dwarf)
     letter: Y
@@ -155,4 +201,7 @@ MonoBehaviour:
     - 0.9
     - 1.1
     bolometricLuminosity: []
+    bolometricCorrection:
+    - 0
+    - 0
     chromaticity: {r: 0.31023836, g: 0, b: 0.4716981, a: 0}
