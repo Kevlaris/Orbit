@@ -1,0 +1,158 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26a4e7ed443b194b9953adbcfc99352, type: 3}
+  m_Name: Harvard
+  m_EditorClassIdentifier: 
+  classificationName: Harvard system
+  spectralClasses:
+  - className: O (Blue-Violet)
+    letter: O
+    numberOfTypes: 5
+    firstType: 5
+    temperature: 30750000
+    solarMass:
+    - 16
+    solarRadii:
+    - 6.6
+    bolometricLuminosity:
+    - 30000
+    chromaticity: {r: 0.57254905, g: 0.70980394, b: 1, a: 0}
+  - className: B (Blue)
+    letter: B
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 1027000030750000
+    solarMass:
+    - 2.1
+    - 16
+    solarRadii:
+    - 1.8
+    - 6.6
+    bolometricLuminosity:
+    - 25
+    - 30000
+    chromaticity: {r: 0.63529414, g: 0.75294125, b: 1, a: 0}
+  - className: A (White)
+    letter: A
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 4c1d000010270000
+    solarMass:
+    - 1.4
+    - 2.1
+    solarRadii:
+    - 1.4
+    - 1.8
+    bolometricLuminosity:
+    - 5
+    - 25
+    chromaticity: {r: 0.8352942, g: 0.87843144, b: 1, a: 0}
+  - className: F (White-Yellow)
+    letter: F
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 701700004c1d0000
+    solarMass:
+    - 1.04
+    - 1.4
+    solarRadii:
+    - 1.15
+    - 1.4
+    bolometricLuminosity:
+    - 1.5
+    - 5
+    chromaticity: {r: 0.97647065, g: 0.9607844, b: 1, a: 0}
+  - className: G (Yellow)
+    letter: G
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 5014000070170000
+    solarMass:
+    - 0.8
+    - 1.04
+    solarRadii:
+    - 0.96
+    - 1.15
+    bolometricLuminosity:
+    - 0.6
+    - 1.5
+    chromaticity: {r: 1, g: 0.9294118, b: 0.89019614, a: 0}
+  - className: K (Orange)
+    letter: K
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 740e000050140000
+    solarMass:
+    - 0.45
+    - 0.8
+    solarRadii:
+    - 0.7
+    - 0.96
+    bolometricLuminosity:
+    - 0.08
+    - 0.6
+    chromaticity: {r: 1, g: 0.854902, b: 0.70980394, a: 0}
+  - className: M (Red)
+    letter: M
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 60090000740e0000
+    solarMass:
+    - 0.08
+    - 0.45
+    solarRadii:
+    - 0
+    - 0.7
+    bolometricLuminosity:
+    - 0
+    - 0.08
+    chromaticity: {r: 1, g: 0.70980394, b: 0.42352945, a: 0}
+  - className: L (Brown Dwarf)
+    letter: L
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 1405000060090000
+    solarMass:
+    - 0.012
+    - 0.08
+    solarRadii:
+    - 0.9
+    - 1.1
+    bolometricLuminosity:
+    - 0.0000363
+    chromaticity: {r: 0.6415094, g: 0.005749807, b: 0, a: 0}
+  - className: T (Brown Dwarf)
+    letter: T
+    numberOfTypes: 10
+    firstType: 0
+    temperature: bc02000014050000
+    solarMass:
+    - 0.012
+    - 0.08
+    solarRadii:
+    - 0.9
+    - 1.1
+    bolometricLuminosity: []
+    chromaticity: {r: 0.6431373, g: 0, b: 0.40570924, a: 0}
+  - className: Y (Brown Dwarf)
+    letter: Y
+    numberOfTypes: 10
+    firstType: 0
+    temperature: 00000000bc020000
+    solarMass:
+    - 0.012
+    - 0.08
+    solarRadii:
+    - 0.9
+    - 1.1
+    bolometricLuminosity: []
+    chromaticity: {r: 0.31023836, g: 0, b: 0.4716981, a: 0}
