@@ -97,12 +97,24 @@ public class SpectralClass
 	/// <summary>
 	/// Calculates BCv of star of spectral type
 	/// </summary>
-	/// <param name="type">Relative spectral type number of star (e.g. O2 is 0; A0 is 0)</param>
+	/// <param name="relativeType">Relative spectral type number of star (e.g. O2 is 0; A0 is 0)</param>
 	/// <returns>V-band bolometric correction</returns>
-	public float GetBC(int type)
+	public float GetBC(int relativeType)
 	{
-		float totalBC = bolometricCorrection[1] - bolometricCorrection[0];
-		float typeBC = totalBC / numberOfTypes;
-		return type * typeBC;
+		if (bolometricCorrection.Length == 0)
+		{
+			Debug.LogWarning("This spectral class does not have bolometric correction specified: " + className);
+			return float.NegativeInfinity;
+		}
+		else if (bolometricCorrection.Length == 1)
+		{
+			return bolometricCorrection[0];
+		}
+		else
+		{
+			float totalBC = bolometricCorrection[1] - bolometricCorrection[0];
+			float typeBC = totalBC / numberOfTypes;
+			return bolometricCorrection[0] + relativeType * typeBC;
+		}
 	}
 }
