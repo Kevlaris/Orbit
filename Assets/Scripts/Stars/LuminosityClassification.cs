@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Luminosity Classification", menuName = "Stars/Luminosity Classification System")]
@@ -17,8 +16,15 @@ public class LuminosityClassification : ScriptableObject
 		float bolometricMagnitude = 4.75f - 2.5f * Mathf.Log10(bolometricLuminosity / Universe.solarLuminosity);
 		float bolometricCorrection = spectralClass.GetBC(spectralClass.GetRelativeType(effectiveTemperature));
 		float absoluteMagnitude = bolometricMagnitude - bolometricCorrection;
-		return null;
-		//TODO: find way to import ranges for absolute magnitudes
+
+		MagnitudeLoader loader = new MagnitudeLoader();
+		loader.LoadCSV();
+		int query = loader.FindClass(spectralClass, absoluteMagnitude);
+		if (query == -1)
+		{
+			return null;
+		}
+		return luminosityClasses[query];
 	}
 }
 

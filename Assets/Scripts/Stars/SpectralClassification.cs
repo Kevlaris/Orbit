@@ -34,7 +34,36 @@ public class SpectralClassification : ScriptableObject
 		{
 			return possibleMatches[0].GetType(effectiveTemperature);
 		}
-		return "niggers";
+		return null;
+	}
+	public SpectralClass GetClass(float effectiveTemperature)
+	{
+		SpectralClass[] possibleMatches = Array.FindAll(spectralClasses, x =>
+		(effectiveTemperature > x.temperature[0]) && (effectiveTemperature < x.temperature[1]));
+
+		if (possibleMatches.Length == 0)
+		{
+			SpectralClass a = Array.Find(spectralClasses, x => x.temperature[0] == effectiveTemperature);
+			SpectralClass b = Array.Find(spectralClasses, x => x.temperature[1] == effectiveTemperature);
+			if (a == null)
+			{
+				return b;
+			}
+			else if (b == null)
+			{
+				return a;
+			}
+			else
+			{
+				//SpectralClass[] matches = new SpectralClass[] { a, b };
+				return a;
+			}
+		}
+		else if (possibleMatches.Length == 1)
+		{
+			return possibleMatches[0];
+		}
+		return null;
 	}
 }
 

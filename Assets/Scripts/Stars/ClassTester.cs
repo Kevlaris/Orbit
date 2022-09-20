@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ClassTester : MonoBehaviour
 {
-    public float temp;
+    public float temperature;
+    public float bolometricLuminosity;
     void Start()
     {
-        StellarClassification.Classify(temp);
+        StellarClassification.Classify(temperature, bolometricLuminosity);
     }
 
     // Update is called once per frame

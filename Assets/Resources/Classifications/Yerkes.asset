@@ -17,15 +17,9 @@ MonoBehaviour:
   - className: 0
     prefix: 
     description: hypergiant
-  - className: Ia
+  - className: I
     prefix: 
-    description: very luminous supergiant
-  - className: Iab
-    prefix: 
-    description: intermediately luminous supergiant
-  - className: Ib
-    prefix: 
-    description: luminous supergiant
+    description: supergiant
   - className: II
     prefix: 
     description: bright giant
