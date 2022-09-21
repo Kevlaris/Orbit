@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Text.RegularExpressions;
 
 public class MagnitudeLoader
 {
@@ -9,29 +8,48 @@ public class MagnitudeLoader
 	TextAsset csvFile;
 	readonly char lineSeparator = '\n';
 	readonly char fieldSeparator = ';';
-	Dictionary<string, string[,]> magnitudes = new Dictionary<string, string[,]>();
+	//Dictionary<string, string[,]> magnitudes = new Dictionary<string, string[,]>();
+	Dictionary<string, Dictionary<string, string[]>> magnitudes = new Dictionary<string, Dictionary<string, string[]>>();
+	string[] headers = new string[8];
 
 	public void LoadCSV()
 	{
-		magnitudes = new Dictionary<string, string[,]>();
+		magnitudes = new Dictionary<string, Dictionary<string, string[]>>();
 		csvFile = Resources.Load<TextAsset>("Classifications/magnitudes");
 		string[] lines = csvFile.text.Split(lineSeparator);
 
-		for (int i = 1; i < lines.Length; i++)
+		for (int i = 0; i < lines.Length; i++)
 		{
 			string line = lines[i];
 
 			string[] fields = line.Split(fieldSeparator);
 
+			if (i == 0)
+			{
+				List<string> h = new();
+				for (int j = 0; j < fields.Length; j++)
+				{
+					if (fields[j] != "")
+					{
+						Debug.Log(fields[j]);
+						h.Add(fields[j]);
+					}
+				}
+				headers = h.ToArray();
+				continue;
+			}
+
 			var key = fields[0];
-			string[,] classMagnitudes = new string[8, 2];
+			Dictionary<string, string[]> classMagnitudes = new();
 
 			for (int j = 0; j < 8; j++)
 			{
+				string[] mags = new string[2];
 				for (int k = 0; k < 2; k++)
 				{
-					classMagnitudes[j, k] = fields[j + k + 1];
+					mags[k] = fields[j + k + 1];
 				}
+				classMagnitudes.Add(headers[j], mags);
 			}
 			magnitudes.Add(key, classMagnitudes);
 		}
@@ -51,7 +69,7 @@ public class MagnitudeLoader
 			Debug.LogError("Loader has not been initialised before query");
 			return -2;
 		}
-		magnitudes.TryGetValue(spectralClass.letter.Trim(), out string[,] classMagnitudes);
+		magnitudes.TryGetValue(spectralClass.letter.Trim(), out Dictionary<string, string[]> classMagnitudes);
 		if (classMagnitudes == null)
 		{
 			Debug.LogError("Spectral class not found in magnitudes.csv", csvFile);
@@ -60,23 +78,25 @@ public class MagnitudeLoader
 		List<int> possibleMatches = new List<int>();
 		for (int i = 0; i < 8; i++)
 		{
+			string header = headers[i];
+			string[] mags = classMagnitudes[header];
 			LuminosityClassification yerkes = Resources.Load<LuminosityClassification>("Classifications/Yerkes");
 			Debug.Log(i + ": " + yerkes.luminosityClasses[8 - i - 1].className);
-			if (classMagnitudes[i,0] == "x" || classMagnitudes[i, 1] == "x")
+			if (mags[0] == "x" || mags[1] == "x")
 			{
 				continue;
 			}
 			else
 			{
-				float.TryParse(classMagnitudes[i, 0], out float mag1);
+				float.TryParse(mags[0], out float mag1);
 				float mag2;
-				if (classMagnitudes[i,1] == "Infinity")
+				if (mags[1] == "Infinity")
 				{
 					mag2 = float.PositiveInfinity;
 				}
 				else
 				{
-					float.TryParse(classMagnitudes[i, 1], out mag2);
+					float.TryParse(mags[1], out mag2);
 				}				
 
 				if (absoluteMagnitude > mag1 && absoluteMagnitude < mag2)	// Mv is in a range
