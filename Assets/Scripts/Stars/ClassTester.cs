@@ -5,15 +5,25 @@ using UnityEngine;
 public class ClassTester : MonoBehaviour
 {
     public float temperature;
-    public float bolometricLuminosity;
+    public float solarLuminosity;
+    public float absoluteMagnitude;
+    public bool calculateByMagnitude;
+    public StellarClassification.StellarClass stellarClass;
     void Start()
     {
-        StellarClassification.Classify(temperature, bolometricLuminosity);
+        ClassifyStar();
+        Debug.Log(StellarClassification.ClassString(stellarClass));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void ClassifyStar()
+	{
+		if (calculateByMagnitude)
+		{
+            stellarClass = StellarClassification.ClassifyByMagnitude(temperature, absoluteMagnitude);
+		}
+		else
+		{
+            stellarClass = StellarClassification.Classify(temperature, solarLuminosity * Universe.solarLuminosity);
+		}
+	}
 }

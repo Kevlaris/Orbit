@@ -107,12 +107,17 @@ public class SpectralClass
 		int type = firstType + index;
 		return letter + type;
 	}
+	public string GetType(int relativeType)
+	{
+		int type = firstType + relativeType;
+		return letter + type;
+	}
 	public int GetRelativeType(float effectiveTemperature)
 	{
 		int totalTemperature = temperature[1] - temperature[0];
 		float localTemperature = effectiveTemperature - temperature[0];
 		float typeTemperature = totalTemperature / numberOfTypes;
-		int index = -1;
+		int index = 0;
 		for (int i = 0; i < numberOfTypes; i++)
 		{
 			if (localTemperature > (numberOfTypes - i) * typeTemperature)

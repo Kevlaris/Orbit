@@ -26,6 +26,22 @@ public class LuminosityClassification : ScriptableObject
 		}
 		return luminosityClasses[query];
 	}
+	public LuminosityClass Classify(float absoluteMagnitude, SpectralClass spectralClass)
+	{
+		if (spectralClass.letter == "L" || spectralClass.letter == "T" || spectralClass.letter == "Y")
+		{
+			return Array.Find(luminosityClasses, x => x.className == "V");  // brown dwarfs are main sequence, their mass and luminosity is near-constant
+		}
+
+		MagnitudeLoader loader = new MagnitudeLoader();
+		loader.LoadCSV();
+		int query = loader.FindClass(spectralClass, absoluteMagnitude);
+		if (query == -1)
+		{
+			return null;
+		}
+		return luminosityClasses[query];
+	}
 }
 
 [System.Serializable]

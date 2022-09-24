@@ -330,8 +330,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baba9424cc11fef43b008012e8cf6f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  temperature: 5800
-  bolometricLuminosity: 3.8e+26
+  temperature: 5772
+  solarLuminosity: 1
+  absoluteMagnitude: 4.83
+  calculateByMagnitude: 0
 --- !u!4 &1040179821
 Transform:
   m_ObjectHideFlags: 0

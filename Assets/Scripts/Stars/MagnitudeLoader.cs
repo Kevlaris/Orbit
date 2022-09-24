@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class MagnitudeLoader
 {
@@ -10,7 +9,7 @@ public class MagnitudeLoader
 	readonly char fieldSeparator = ';';
 	//Dictionary<string, string[,]> magnitudes = new Dictionary<string, string[,]>();
 	Dictionary<string, Dictionary<string, string[]>> magnitudes = new Dictionary<string, Dictionary<string, string[]>>();
-	string[] headers = new string[8];
+	readonly string[] headers = new string[] { "VII", "VI", "V", "IV", "III", "II", "I", "0" };
 
 	public void LoadCSV()
 	{
@@ -24,9 +23,15 @@ public class MagnitudeLoader
 
 			string[] fields = line.Split(fieldSeparator);
 
+			if (fields.Length < 17)
+			{
+				continue;
+			}
+
+			/*
 			if (i == 0)
 			{
-				List<string> h = new();
+				List<string> h = new List<string>();
 				for (int j = 0; j < fields.Length; j++)
 				{
 					if (fields[j] != "")
@@ -38,16 +43,17 @@ public class MagnitudeLoader
 				headers = h.ToArray();
 				continue;
 			}
+			*/
 
 			var key = fields[0];
-			Dictionary<string, string[]> classMagnitudes = new();
+			Dictionary<string, string[]> classMagnitudes = new Dictionary<string, string[]>();
 
 			for (int j = 0; j < 8; j++)
 			{
 				string[] mags = new string[2];
 				for (int k = 0; k < 2; k++)
 				{
-					mags[k] = fields[j + k + 1];
+					mags[k] = fields[2 * j + k + 1];
 				}
 				classMagnitudes.Add(headers[j], mags);
 			}
@@ -80,8 +86,6 @@ public class MagnitudeLoader
 		{
 			string header = headers[i];
 			string[] mags = classMagnitudes[header];
-			LuminosityClassification yerkes = Resources.Load<LuminosityClassification>("Classifications/Yerkes");
-			Debug.Log(i + ": " + yerkes.luminosityClasses[8 - i - 1].className);
 			if (mags[0] == "x" || mags[1] == "x")
 			{
 				continue;
@@ -97,18 +101,16 @@ public class MagnitudeLoader
 				else
 				{
 					float.TryParse(mags[1], out mag2);
-				}				
+				}
 
-				if (absoluteMagnitude > mag1 && absoluteMagnitude < mag2)	// Mv is in a range
+				if (absoluteMagnitude > mag1 && absoluteMagnitude < mag2)   // Mv is in a range
 				{
-					Debug.Log(spectralClass.letter + ": " + mag1 + "<" + absoluteMagnitude + "<" + mag2);
-					Debug.Log("i = " + i);
-					Debug.Log("type = " + (8 - i - 1));
+					//Debug.Log(spectralClass.letter + ": " + mag1 + "<" + absoluteMagnitude + "<" + mag2);
 					return 8 - i - 1;
 				}
-				else if (absoluteMagnitude == mag1)	// Mv is the lower limit
+				else if (absoluteMagnitude == mag1) // Mv is the lower limit
 				{
-					if (i == 7)	// if 0
+					if (i == 7) // if 0
 					{
 						return 8 - i - 1;
 					}
@@ -117,9 +119,9 @@ public class MagnitudeLoader
 						possibleMatches.Add(i);
 					}
 				}
-				else if (absoluteMagnitude == mag2)	// Mv is the upper limit
+				else if (absoluteMagnitude == mag2) // Mv is the upper limit
 				{
-					if (i == 0)	// if VII
+					if (i == 0) // if VII
 					{
 						return 8 - i - 1;
 					}
@@ -144,7 +146,7 @@ public class MagnitudeLoader
 		{
 			if (possibleMatches.Contains(2))
 			{
-				return 5;	// assume star is main-sequenced
+				return 5;   // assume star is main-sequenced
 			}
 			else
 			{
