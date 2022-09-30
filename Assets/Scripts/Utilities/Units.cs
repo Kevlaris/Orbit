@@ -159,7 +159,7 @@ public static class Length
 	{
 		if (unit == quantity.Unit)
 		{
-			Debug.Log("Attempted conversion to same unit");
+			//Debug.Log("Attempted conversion to same unit");
 			return quantity;
 		}
 		else

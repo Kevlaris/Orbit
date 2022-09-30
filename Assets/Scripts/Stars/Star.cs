@@ -9,6 +9,7 @@ public class Star : CelestialBody
 	public float solarRadius;
 	public float luminosity;
 	public float temperature;
+	GameObject particlePrefab;
 
 	Material mat;
 	StellarClassification.StellarClass stellarClass;
@@ -35,6 +36,8 @@ public class Star : CelestialBody
 		rb = GetComponent<Rigidbody>();
 		rb.mass = mass;
 		rb.useGravity = false;
+
+		particlePrefab = Universe.solarParticleStandard;
 	}
 
 	private void Start()
@@ -43,10 +46,82 @@ public class Star : CelestialBody
 		mat.EnableKeyword("_EMISSION");
 		stellarClass = StellarClassification.Classify(temperature, luminosity * Universe.solarLuminosity);
 		chromaticity = stellarClass.SpectralClass.chromaticity;
+		CalibrateParticleSystems(new Quantity(solarRadius * Universe.solarRadius, Length.Unit.km));
 	}
 
 	private void Update()
 	{
-		mat.SetColor("_EmissionColor", chromaticity * Mathf.LinearToGammaSpace(luminosity * .1f));
+		Color.RGBToHSV(chromaticity, out float h, out float s, out float v);
+		mat.SetColor("_EmissionColor", Color.HSVToRGB(h, s, v/2, true) * Mathf.LinearToGammaSpace(Mathf.Clamp(luminosity, 0, 15)));
+	}
+
+	void CalibrateParticleSystems(Quantity radius)
+	{
+		float multiplier = Length.Convert(radius, Length.Unit.km).amount / Length.Convert(Universe.solarRadius, Length.Unit.km).amount;
+
+		// prefab particle systems
+		ParticleSystem surfacePrefab = particlePrefab.GetComponent<ParticleSystem>();
+		ParticleSystem coronaPrefab = particlePrefab.transform.GetChild(0).GetComponent<ParticleSystem>();
+		ParticleSystem flaresPrefab = particlePrefab.transform.GetChild(1).GetComponent<ParticleSystem>();
+		// actual particle systems
+		ParticleSystem surface = transform.GetChild(1).GetComponent<ParticleSystem>();
+		ParticleSystem corona = transform.GetChild(1).GetChild(0).GetComponent<ParticleSystem>();
+		ParticleSystem flares = transform.GetChild(1).GetChild(1).GetComponent<ParticleSystem>();
+
+		ParticleSystem.MinMaxCurve startSpeed, startSize;
+
+		ScaleParticleSystem(surfacePrefab, multiplier, out startSpeed, out startSize);
+		var surfaceMain = surface.main;
+		surfaceMain.startSpeed = startSpeed;
+		surfaceMain.startSize = startSize;
+
+		ScaleParticleSystem(coronaPrefab, multiplier, out startSpeed, out startSize);
+		var coronaMain = corona.main;
+		coronaMain.startSpeed = startSpeed;
+		coronaMain.startSize = startSize;
+
+		ScaleParticleSystem(flaresPrefab, multiplier, out startSpeed, out startSize);
+		var flaresMain = flares.main;
+		flaresMain.startSpeed = startSpeed;
+		flaresMain.startSize = startSize;
+	}
+
+	/// <summary>
+	/// Scale Particle System in accordance to the given multiplier.
+	/// </summary>
+	void ScaleParticleSystem(ParticleSystem particleSystem, float multiplier, out ParticleSystem.MinMaxCurve startSpeed, out ParticleSystem.MinMaxCurve startSize)
+	{
+		var main = particleSystem.main;
+
+		startSpeed = main.startSpeed;
+		startSize = main.startSize;
+
+		if (multiplier == 1 || multiplier <= 0) return;
+
+		switch (startSpeed.mode)
+		{
+			case ParticleSystemCurveMode.Constant:
+				startSpeed.constant =  multiplier;
+				break;
+			case ParticleSystemCurveMode.TwoConstants:
+				startSpeed.constantMin *= multiplier;
+				startSpeed.constantMax *= multiplier;
+				break;
+			default:
+				break;
+		}
+		
+		switch (startSize.mode)
+		{
+			case ParticleSystemCurveMode.Constant:
+				startSize.constant *= multiplier;
+				break;
+			case ParticleSystemCurveMode.TwoConstants:
+				startSize.constantMin *= multiplier;
+				startSize.constantMax *= multiplier;
+				break;
+			default:
+				break;
+		}
 	}
 }
