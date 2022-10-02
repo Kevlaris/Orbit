@@ -31,7 +31,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -4.8
     - -3.06
-    chromaticity: {r: 0.64127415, g: 0.57254905, b: 1, a: 0}
+    chromaticity: {r: 0.58633524, g: 0.39999998, b: 1, a: 0}
+    hue: 60
   - className: B (Blue)
     letter: B
     numberOfTypes: 10
@@ -49,7 +50,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -3.03
     - -0.38
-    chromaticity: {r: 0.63529414, g: 0.75294125, b: 1, a: 0}
+    chromaticity: {r: 0.63529414, g: 0.7568628, b: 1, a: 0}
+    hue: 220
   - className: A (White)
     letter: A
     numberOfTypes: 10
@@ -67,7 +69,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -0.24
     - 0
-    chromaticity: {r: 0.61, g: 0.7121428, b: 1, a: 0}
+    chromaticity: {r: 0.8, g: 0.9333333, b: 1, a: 1}
+    hue: 200
   - className: F (White-Yellow)
     letter: F
     numberOfTypes: 10
@@ -85,7 +88,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -0.01
     - -0.08
-    chromaticity: {r: 0.9803704, g: 1, b: 0.8160377, a: 0}
+    chromaticity: {r: 1, g: 1, b: 1, a: 0}
+    hue: 185
   - className: G (Yellow)
     letter: G
     numberOfTypes: 10
@@ -103,7 +107,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -0.09
     - -0.21
-    chromaticity: {r: 1, g: 0.68315035, b: 0.495283, a: 0}
+    chromaticity: {r: 1, g: 1, b: 0.2980392, a: 1}
+    hue: 60
   - className: K (Orange)
     letter: K
     numberOfTypes: 10
@@ -121,7 +126,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -0.22
     - -1.25
-    chromaticity: {r: 0.9622642, g: 0.5289944, b: 0.24964403, a: 0}
+    chromaticity: {r: 1, g: 0.6666667, b: 0, a: 0}
+    hue: 40
   - className: M (Red)
     letter: M
     numberOfTypes: 10
@@ -139,7 +145,8 @@ MonoBehaviour:
     bolometricCorrection:
     - -1.3
     - -5.73
-    chromaticity: {r: 1, g: 0.35223883, b: 0.15566039, a: 0}
+    chromaticity: {r: 1, g: 0.25, b: 0, a: 0}
+    hue: 15
   - className: L (Brown Dwarf)
     letter: L
     numberOfTypes: 10
@@ -155,7 +162,8 @@ MonoBehaviour:
     - 0
     - 0.00017
     bolometricCorrection: []
-    chromaticity: {r: 0.6792453, g: 0.0059064813, b: 0, a: 0}
+    chromaticity: {r: 0.6784314, g: 0, b: 0.22614391, a: 0}
+    hue: 340
   - className: T (Brown Dwarf)
     letter: T
     numberOfTypes: 10
@@ -169,7 +177,8 @@ MonoBehaviour:
     - 1.1
     bolometricLuminosity: []
     bolometricCorrection: []
-    chromaticity: {r: 0.6431373, g: 0, b: 0.40570924, a: 0}
+    chromaticity: {r: 0.6431373, g: 0, b: 0.42875808, a: 0}
+    hue: 320
   - className: Y (Brown Dwarf)
     letter: Y
     numberOfTypes: 10
@@ -184,3 +193,4 @@ MonoBehaviour:
     bolometricLuminosity: []
     bolometricCorrection: []
     chromaticity: {r: 0.31023836, g: 0, b: 0.4716981, a: 0}
+    hue: 280

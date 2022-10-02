@@ -79,7 +79,8 @@ public class SpectralClass
 	public float[] solarRadii = new float[2];
 	public float[] bolometricLuminosity = new float[2];
 	public float[] bolometricCorrection = new float[2];
-	public Color chromaticity;  //chromaticity of object in CIE D65 space
+	[Obsolete] public Color chromaticity;  //chromaticity of object in CIE D65 space
+	[Range(0,360)] public float hue;
 
 	public int[] GetTypes()
 	{

@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Star : CelestialBody
 {
-	[Header("Star Attributes")]
+	//[Header("Star Attributes")]
+	// [Range(0,360)] public float hue;
     public Color chromaticity;
 	public float solarRadius;
-	public float luminosity;
+	public float solarLuminosity;
+	public float absoluteMagnitude;
 	public float temperature;
 	GameObject particlePrefab;
 
@@ -27,7 +30,8 @@ public class Star : CelestialBody
 		base.radius.amount = solarRadius * Universe.solarRadius.amount;
 		mass = Mathf.Pow(Universe.lengthScale, 3) * (surfaceGravity * Mathf.Pow(Length.Convert(radius, Length.Unit.m).amount, 2) / Universe.gravitationalConstant);
 		meshHolder = transform.GetChild(0);
-		meshHolder.localScale = Vector3.one * Length.ConvertToWorld(radius) * 2;
+		meshHolder.localScale = 2 * Length.ConvertToWorld(radius) * Vector3.one;
+		//chromaticity = Color.HSVToRGB(hue.Remap(0,360,0,1), 1, 1);
 	}
 
 	private void Awake()
@@ -44,19 +48,30 @@ public class Star : CelestialBody
 	{
 		mat = meshHolder.GetComponent<MeshRenderer>().material;
 		mat.EnableKeyword("_EMISSION");
-		stellarClass = StellarClassification.Classify(temperature, luminosity * Universe.solarLuminosity);
-		chromaticity = stellarClass.SpectralClass.chromaticity;
-		CalibrateParticleSystems(new Quantity(solarRadius * Universe.solarRadius, Length.Unit.km));
+		stellarClass = StellarClassification.Classify(temperature, solarLuminosity * Universe.solarLuminosity);
+		//chromaticity = stellarClass.SpectralClass.chromaticity;
+		//hue = stellarClass.SpectralClass.hue;
+		CalibrateParticleSystems();
 	}
 
 	private void Update()
 	{
-		Color.RGBToHSV(chromaticity, out float h, out float s, out float v);
-		mat.SetColor("_EmissionColor", Color.HSVToRGB(h, s, v/2, true) * Mathf.LinearToGammaSpace(Mathf.Clamp(luminosity, 0, 15)));
+		/*
+		Color.RGBToHSV(chromaticity, out float h, out float s, out _);
+		mat.SetColor("_EmissionColor", Color.HSVToRGB((hue-5).Remap(0,360,0,1), .5f, .35f, true) * Mathf.LinearToGammaSpace(Mathf.Clamp(luminosity, 0, 15)));
+		*/
+		mat.SetColor("_EmissionColor", chromaticity);
 	}
 
-	void CalibrateParticleSystems(Quantity radius)
+	void CalibrateParticleSystems()
 	{
+		ScaleParticleSystems(new Quantity(solarRadius * Universe.solarRadius, Length.Unit.km));
+		//ColorParticleSystems(hue);
+	}
+
+	public void ScaleParticleSystems(Quantity radius)
+	{
+		particlePrefab = Universe.solarParticleStandard;
 		float multiplier = Length.Convert(radius, Length.Unit.km).amount / Length.Convert(Universe.solarRadius, Length.Unit.km).amount;
 
 		// prefab particle systems
@@ -64,9 +79,7 @@ public class Star : CelestialBody
 		ParticleSystem coronaPrefab = particlePrefab.transform.GetChild(0).GetComponent<ParticleSystem>();
 		ParticleSystem flaresPrefab = particlePrefab.transform.GetChild(1).GetComponent<ParticleSystem>();
 		// actual particle systems
-		ParticleSystem surface = transform.GetChild(1).GetComponent<ParticleSystem>();
-		ParticleSystem corona = transform.GetChild(1).GetChild(0).GetComponent<ParticleSystem>();
-		ParticleSystem flares = transform.GetChild(1).GetChild(1).GetComponent<ParticleSystem>();
+		GetParticleSystems(out ParticleSystem surface, out ParticleSystem corona, out ParticleSystem flares);
 
 		ParticleSystem.MinMaxCurve startSpeed, startSize;
 
@@ -123,5 +136,46 @@ public class Star : CelestialBody
 			default:
 				break;
 		}
+	}
+
+
+	/// <param name="hue">Hue component of color [0-360]</param>
+	void ColorParticleSystems(float hue)
+	{
+		GetParticleSystems(out ParticleSystem surface, out ParticleSystem corona, out ParticleSystem flares);
+		Debug.Log(hue.Remap(0,360,0,1));
+		//surface
+		ColorParticleSystem(surface, hue.Remap(0,360,0,1), .85f, .9f, out ParticleSystem.MinMaxGradient surfaceGradient);
+		var surfaceColor = surface.colorOverLifetime;
+		surfaceColor.color = surfaceGradient;
+
+		//corona
+		ColorParticleSystem(corona, (hue-5).Remap(0,360,0,1), 1f, .8f, out ParticleSystem.MinMaxGradient coronaGradient);
+		var coronaColor = surface.colorOverLifetime;
+		coronaColor.color = coronaGradient;
+
+		//flares
+		ColorParticleSystem(flares, (hue-20).Remap(0,360,0,1), 1f, .75f, out ParticleSystem.MinMaxGradient flaresGradient);
+		var flaresColor = flares.colorOverLifetime;
+		flaresColor.color = flaresGradient;
+	}
+
+	void ColorParticleSystem(ParticleSystem particleSystem, float hue, float saturation, float value, out ParticleSystem.MinMaxGradient colorOverLifetime)
+	{
+		var colorModule = particleSystem.colorOverLifetime;
+		colorOverLifetime = colorModule.color;
+		var gradient = colorOverLifetime.gradient;
+		for (int i = 0; i < gradient.colorKeys.Length; i++)
+		{
+			gradient.colorKeys[i].color = Color.HSVToRGB(hue, saturation, value);
+		}
+		colorOverLifetime.gradient = gradient;
+	}
+
+	void GetParticleSystems(out ParticleSystem surface, out ParticleSystem corona, out ParticleSystem flares)
+	{
+		surface = transform.GetChild(1).GetComponent<ParticleSystem>();
+		corona = transform.GetChild(1).GetChild(0).GetComponent<ParticleSystem>();
+		flares = transform.GetChild(1).GetChild(1).GetComponent<ParticleSystem>();
 	}
 }

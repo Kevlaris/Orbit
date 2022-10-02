@@ -8,6 +8,7 @@ public static class StellarClassification
 		public int RelativeType;
 		public LuminosityClass LuminosityClass;
 	}
+
 	public static StellarClass Classify(float effectiveTemperature, float bolometricLuminosity)
 	{
 		SpectralClassification harvard = Resources.Load<SpectralClassification>("Classifications/Harvard");
@@ -40,13 +41,28 @@ public static class StellarClassification
 	}
 	public static string ClassString(StellarClass stellarClass)
 	{
-		if (stellarClass.LuminosityClass.prefix != null && stellarClass.LuminosityClass.prefix != "" && stellarClass.LuminosityClass.prefix != " ")
+		if (stellarClass.LuminosityClass == null && stellarClass.SpectralClass != null)
 		{
-			return stellarClass.LuminosityClass.prefix + stellarClass.SpectralClass.GetType(stellarClass.RelativeType);
+			return stellarClass.SpectralClass.GetType(stellarClass.RelativeType) + "?";
+		}
+		else if (stellarClass.LuminosityClass != null && stellarClass.SpectralClass == null)
+		{
+			return "?" + stellarClass.LuminosityClass.className;
+		}
+		else if (stellarClass.LuminosityClass != null && stellarClass.SpectralClass != null)
+		{
+			if (stellarClass.LuminosityClass.prefix != null && stellarClass.LuminosityClass.prefix != "" && stellarClass.LuminosityClass.prefix != " ")
+			{
+				return stellarClass.LuminosityClass.prefix + stellarClass.SpectralClass.GetType(stellarClass.RelativeType);
+			}
+			else
+			{
+				return stellarClass.SpectralClass.GetType(stellarClass.RelativeType) + stellarClass.LuminosityClass.className;
+			}
 		}
 		else
 		{
-			return stellarClass.SpectralClass.GetType(stellarClass.RelativeType) + stellarClass.LuminosityClass.className;
+			return "?";
 		}
 	}
 }
