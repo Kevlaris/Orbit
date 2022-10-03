@@ -83,6 +83,11 @@ public class StarEditor : Editor
 		}
 		EditorGUILayout.EndHorizontal();
 
+		if (GUILayout.Button(new GUIContent("Save Particle Systems")))
+		{
+			SaveParticles();
+		}
+
 		EditorGUILayout.EndVertical();
 		serializedObject.ApplyModifiedProperties();
 		GetClass();
@@ -103,5 +108,13 @@ public class StarEditor : Editor
 		{
 			stellarClass = StellarClassification.Classify(temperature.floatValue, luminanceValue * Universe.solarLuminosity);
 		}
+	}
+
+	void SaveParticles()
+	{
+		string localPath = "Assets/Resources/Stars/Particles/" + StellarClassification.ClassString(stellarClass) + ".prefab";
+		localPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
+		PrefabUtility.SaveAsPrefabAsset(((Star)target).transform.GetChild(1).gameObject, localPath, out bool success);
+		if (!success) Debug.LogWarning("Can't save particle system");
 	}
 }

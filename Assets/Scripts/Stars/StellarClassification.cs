@@ -11,11 +11,9 @@ public static class StellarClassification
 
 	public static StellarClass Classify(float effectiveTemperature, float bolometricLuminosity)
 	{
-		SpectralClassification harvard = Resources.Load<SpectralClassification>("Classifications/Harvard");
-		LuminosityClassification yerkes = Resources.Load<LuminosityClassification>("Classifications/Yerkes");
-		SpectralClass spectral = harvard.GetClass(effectiveTemperature);
+		SpectralClass spectral = Universe.harvard.GetClass(effectiveTemperature);
 		int relativeType = spectral.GetRelativeType(effectiveTemperature);
-		LuminosityClass luminosityClass = yerkes.Classify(bolometricLuminosity, effectiveTemperature, spectral);
+		LuminosityClass luminosityClass = Universe.yerkes.Classify(bolometricLuminosity, effectiveTemperature, spectral);
 
 		return new StellarClass()
 		{
@@ -26,11 +24,9 @@ public static class StellarClassification
 	}
 	public static StellarClass ClassifyByMagnitude(float effectiveTemperature, float absoluteMagnitude)
 	{
-		SpectralClassification harvard = Resources.Load<SpectralClassification>("Classifications/Harvard");
-		LuminosityClassification yerkes = Resources.Load<LuminosityClassification>("Classifications/Yerkes");
-		SpectralClass spectral = harvard.GetClass(effectiveTemperature);
+		SpectralClass spectral = Universe.harvard.GetClass(effectiveTemperature);
 		int relativeType = spectral.GetRelativeType(effectiveTemperature);
-		LuminosityClass luminosityClass = yerkes.Classify(absoluteMagnitude, spectral);
+		LuminosityClass luminosityClass = Universe.yerkes.Classify(absoluteMagnitude, spectral);
 
 		return new StellarClass()
 		{

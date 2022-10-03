@@ -43,8 +43,7 @@ public class LuminosityClassification : ScriptableObject
 	}
 	public static float LuminosityToAbsoluteMagnitude(float bolometricLuminosity, float effectiveTemperature)
 	{
-		SpectralClassification harvard = Resources.Load<SpectralClassification>("Classifications/Harvard");
-		SpectralClass spectralClass = harvard.GetClass(effectiveTemperature);
+		SpectralClass spectralClass = Universe.harvard.GetClass(effectiveTemperature);
 
 		float bolometricMagnitude = 4.75f - 2.5f * Mathf.Log10(bolometricLuminosity / Universe.solarLuminosity);    //https://astronomy.stackexchange.com/a/39613
 		float bolometricCorrection = spectralClass.GetBC(spectralClass.GetRelativeType(effectiveTemperature));
@@ -52,8 +51,7 @@ public class LuminosityClassification : ScriptableObject
 	}
 	public static float AbsoluteMagnitudeToLuminosity(float absoluteMagnitude, float effectiveTemperature)
 	{
-		SpectralClassification harvard = Resources.Load<SpectralClassification>("Classifications/Harvard");
-		SpectralClass spectralClass = harvard.GetClass(effectiveTemperature);
+		SpectralClass spectralClass = Universe.harvard.GetClass(effectiveTemperature);
 
 		float bolometricCorrection = spectralClass.GetBC(spectralClass.GetRelativeType(effectiveTemperature));
 		float bolometricMagnitude = absoluteMagnitude - bolometricCorrection;

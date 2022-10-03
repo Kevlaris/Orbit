@@ -14,7 +14,11 @@ public class MagnitudeLoader
 	public void LoadCSV()
 	{
 		magnitudes = new Dictionary<string, Dictionary<string, string[]>>();
-		csvFile = Resources.Load<TextAsset>("Classifications/magnitudes");
+		csvFile = Resources.Load<TextAsset>("Stars/Classifications/magnitudes");
+		if (!csvFile)
+		{
+			Debug.LogError("CSV File containing magnitudes could not be found");
+		}
 		string[] lines = csvFile.text.Split(lineSeparator);
 
 		for (int i = 0; i < lines.Length; i++)

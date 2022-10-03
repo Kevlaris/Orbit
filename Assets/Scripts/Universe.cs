@@ -11,5 +11,8 @@ public static class Universe
     /// Equatorial radius of the Sun. (in km)
     /// </summary>
     public static Quantity solarRadius = new Quantity(695700, Length.Unit.km, true);
-    public static GameObject solarParticleStandard = Resources.Load<GameObject>("SolarParticleStandard");
+
+    public static GameObject solarParticleStandard = Resources.Load<GameObject>("Stars/Particles/SolarParticleStandard");
+    public static SpectralClassification harvard = Resources.Load<SpectralClassification>("Stars/Classifications/Harvard");
+    public static LuminosityClassification yerkes = Resources.Load<LuminosityClassification>("Stars/Classifications/Yerkes");
 }
