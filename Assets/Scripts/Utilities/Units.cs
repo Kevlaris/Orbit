@@ -22,6 +22,12 @@ public class Quantity
 		Unit = unit;
 		this.isStatic = isStatic;
 	}
+	public Quantity(Quantity quantity)
+	{
+		this.amount = quantity.amount;
+		this.Unit = quantity.Unit;
+		this.isStatic = quantity.isStatic;
+	}
 
 	public string ConvertToString()
 	{
@@ -111,6 +117,14 @@ public class Quantity
 	public static float operator /(float a, Quantity b)
 	{
 		return a / b.amount;
+	}
+
+	public static implicit operator float(Quantity quantity)
+	{
+		Quantity q = new Quantity(quantity);
+		q.Convert(Length.defaultUnit);
+		return q.amount;
+
 	}
 	#endregion
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -35,71 +36,95 @@ public class StarEditor : Editor
 		serializedObject.Update();
 		EditorGUILayout.BeginVertical();
 
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.PropertyField(temperature);
-		EditorGUILayout.LabelField(StellarClassification.ClassString(stellarClass));
-		EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PropertyField(temperature);
+				EditorGUILayout.LabelField(new GUIContent(StellarClassification.ClassString(stellarClass), stellarClass.SpectralClass.className.Split('(', StringSplitOptions.RemoveEmptyEntries)[1].TrimEnd(')')));
+			EditorGUILayout.EndHorizontal();
 
-		EditorGUILayout.PropertyField(chromaticity);
+			EditorGUILayout.PropertyField(chromaticity);
 
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.PropertyField(solarRadius);
-		if (GUILayout.Button("Scale"))
-		{
-			ScaleStar();
-		}
-		EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PropertyField(solarRadius);
+				if (GUILayout.Button(new GUIContent("Scale", "Scale the star's particles")))
+				{
+					ScaleStar();
+				}
+			EditorGUILayout.EndHorizontal();
 
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.PropertyField(surfaceGravity);
-		EditorGUILayout.LabelField("m/s" + '\u00B2');
-		EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PropertyField(surfaceGravity);
+				EditorGUILayout.LabelField("m/s" + '\u00B2');
+			EditorGUILayout.EndHorizontal();
 
-		EditorGUILayout.BeginHorizontal();
-		if (useMagnitude)
-		{
-			luminanceValue = EditorGUILayout.FloatField("Absolute Magnitude", luminanceValue);
-			absoluteMagnitude.floatValue = luminanceValue;
-			solarLuminosity.floatValue = LuminosityClassification.AbsoluteMagnitudeToLuminosity(absoluteMagnitude.floatValue, temperature.floatValue) / Universe.solarLuminosity;
+			EditorGUILayout.BeginHorizontal();
+				if (useMagnitude)
+				{
+					luminanceValue = EditorGUILayout.FloatField("Absolute Magnitude", luminanceValue);
+					absoluteMagnitude.floatValue = luminanceValue;
+					solarLuminosity.floatValue = LuminosityClassification.AbsoluteMagnitudeToLuminosity(absoluteMagnitude.floatValue, temperature.floatValue) / Universe.solarLuminosity;
 
-		}
-		else
-		{
-			luminanceValue = EditorGUILayout.FloatField("Solar Luminosity", luminanceValue);
-			solarLuminosity.floatValue = luminanceValue;
-			absoluteMagnitude.floatValue = LuminosityClassification.LuminosityToAbsoluteMagnitude(solarLuminosity.floatValue * Universe.solarLuminosity, temperature.floatValue);
-		}
-		if (GUILayout.Button("Swap"))
-		{
-			if (useMagnitude)
+				}
+				else
+				{
+					luminanceValue = EditorGUILayout.FloatField("Solar Luminosity", luminanceValue);
+					solarLuminosity.floatValue = luminanceValue;
+					absoluteMagnitude.floatValue = LuminosityClassification.LuminosityToAbsoluteMagnitude(solarLuminosity.floatValue * Universe.solarLuminosity, temperature.floatValue);
+				}
+		
+				if (GUILayout.Button(new GUIContent("Swap", "Swap between Luminosity and Absolute Magnitude")))
+				{
+					if (useMagnitude)
+					{
+						luminanceValue = LuminosityClassification.AbsoluteMagnitudeToLuminosity(absoluteMagnitude.floatValue, temperature.floatValue) / Universe.solarLuminosity;
+					}
+					else
+					{
+						luminanceValue = LuminosityClassification.LuminosityToAbsoluteMagnitude(solarLuminosity.floatValue * Universe.solarLuminosity, temperature.floatValue);
+					}
+					useMagnitude = !useMagnitude;
+				}
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.Separator();
+
+			if (((Star)target).GetParticleObject() != null)
 			{
-				luminanceValue = LuminosityClassification.AbsoluteMagnitudeToLuminosity(absoluteMagnitude.floatValue, temperature.floatValue) / Universe.solarLuminosity;
+				EditorGUILayout.BeginHorizontal();
+				if (GUILayout.Button(new GUIContent("Save Particles")))
+				{
+					SaveParticles();
+				}
+				if (GUILayout.Button("Reload"))
+				{
+					ReloadParticles();
+				}
+				if (GUILayout.Button("Unload"))
+				{
+					UnloadParticles();
+				}
+				EditorGUILayout.EndHorizontal();
 			}
 			else
 			{
-				luminanceValue = LuminosityClassification.LuminosityToAbsoluteMagnitude(solarLuminosity.floatValue * Universe.solarLuminosity, temperature.floatValue);
+				if (GUILayout.Button("Load Particles"))
+				{
+					LoadParticles();
+				}
 			}
-			useMagnitude = !useMagnitude;
-		}
-		EditorGUILayout.EndHorizontal();
 
-		if (GUILayout.Button(new GUIContent("Save Particle Systems")))
-		{
-			SaveParticles();
-		}
-
-		EditorGUILayout.EndVertical();
+			EditorGUILayout.EndVertical();
 		serializedObject.ApplyModifiedProperties();
 		GetClass();
 	}
 
 	void ScaleStar()
 	{
-		((Star)target).ScaleParticleSystems(new Quantity(solarRadius.floatValue * Universe.solarRadius, Length.Unit.km));
+		((Star)target).ScaleParticleSystems(solarRadius.floatValue);
 	}
 
 	void GetClass()
 	{
+		/*
 		if (useMagnitude)
 		{
 			stellarClass = StellarClassification.ClassifyByMagnitude(temperature.floatValue, luminanceValue);
@@ -108,13 +133,30 @@ public class StarEditor : Editor
 		{
 			stellarClass = StellarClassification.Classify(temperature.floatValue, luminanceValue * Universe.solarLuminosity);
 		}
+		*/
+
+		stellarClass = ((Star)target).GetClass();
 	}
 
 	void SaveParticles()
 	{
 		string localPath = "Assets/Resources/Stars/Particles/" + StellarClassification.ClassString(stellarClass) + ".prefab";
 		localPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
+		GameObject particleObject = ((Star)target).GetParticleObject();
+		if (!particleObject) return;
 		PrefabUtility.SaveAsPrefabAsset(((Star)target).transform.GetChild(1).gameObject, localPath, out bool success);
 		if (!success) Debug.LogWarning("Can't save particle system");
+	}
+	void ReloadParticles()
+	{
+		((Star)target).LoadParticleSystem();
+	}
+	void UnloadParticles()
+	{
+		((Star)target).UnloadParticleSystem();
+	}
+	void LoadParticles()
+	{
+		((Star)target).CalibrateParticleSystems();
 	}
 }

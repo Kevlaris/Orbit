@@ -67,4 +67,5 @@ public class LuminosityClass
 	public string className;
 	public string prefix;
 	public string description;
+	public string noun;
 }
