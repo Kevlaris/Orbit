@@ -23,7 +23,7 @@ public class Quantity
 		this.isStatic = isStatic;
 	}
 
-	public string ConvertToString()
+	public override string ToString()
 	{
 		string output = amount.ToString();
 		output += " " + Enum.GetName(typeof(Length.Unit), Unit);
@@ -111,6 +111,12 @@ public class Quantity
 	public static float operator /(float a, Quantity b)
 	{
 		return a / b.amount;
+	}
+	/// <returns>Value of Quantity in metres</returns>
+	public static implicit operator float(Quantity quantity)
+	{
+		quantity.Convert(Length.Unit.m);
+		return quantity.amount;
 	}
 	#endregion
 

@@ -12,12 +12,14 @@ public class CelestialBody : MonoBehaviour
 	protected Transform meshHolder;
 	protected Rigidbody rb;
 
+	public bool init = false;
+
 	private void Awake()
 	{
-		velocity = initialVelocity;
 		rb = GetComponent<Rigidbody>();
 		rb.mass = mass;
 		rb.useGravity = false;
+		if (init) velocity = initialVelocity;
 	}
 
 	private void Reset()
@@ -35,8 +37,19 @@ public class CelestialBody : MonoBehaviour
 		meshHolder.localScale = Vector3.one * Length.ConvertToWorld(radius) * 2;
 	}
 
+	public void Init(Vector3 velocity)
+	{
+		if (!init)
+		{
+			initialVelocity = velocity;
+			this.velocity = velocity;
+			init = true;
+		}
+	}
+
 	public void UpdateVelocity(CelestialBody[] bodies, float timeStep)
 	{
+		if (!init) return;
 		foreach (var body in bodies)
 		{
 			if (body != this)
@@ -60,11 +73,13 @@ public class CelestialBody : MonoBehaviour
 
 	public void UpdateVelocity(Vector3 acceleration, float timeStep)
 	{
+		if (!init) return;
 		velocity += acceleration * timeStep;
 	}
 
 	public void UpdatePosition(float timeStep)
 	{
+		if (!init) return;
 		rb.MovePosition(rb.position + velocity * timeStep);
 		//rb.velocity = velocity;
 	}
