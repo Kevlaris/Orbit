@@ -17,24 +17,32 @@ MonoBehaviour:
   - className: 0
     prefix: 
     description: hypergiant
+    noun: Hypergiant
   - className: I
     prefix: 
     description: supergiant
+    noun: Supergiant
   - className: II
     prefix: 
     description: bright giant
+    noun: Bright Giant
   - className: III
     prefix: 
     description: giant
+    noun: Giant
   - className: IV
     prefix: 
     description: subgiant
+    noun: Subgiant
   - className: V
     prefix: 
     description: main-sequence star (dwarf)
+    noun: Dwarf
   - className: VI
     prefix: sd
     description: subdwarf
+    noun: Subdwarf
   - className: VII
     prefix: D
     description: white dwarf
+    noun: White Dwarf

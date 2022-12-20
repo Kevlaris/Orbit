@@ -70,7 +70,7 @@ public class SpectralClassification : ScriptableObject
 [System.Serializable]
 public class SpectralClass
 {
-	public string className;
+	public string className => letter + " (" + color + " Star)";
 	public string letter;
 	public int numberOfTypes = 10;
 	public int firstType = 0;
@@ -79,8 +79,9 @@ public class SpectralClass
 	public float[] solarRadii = new float[2];
 	public float[] bolometricLuminosity = new float[2];
 	public float[] bolometricCorrection = new float[2];
+	public string color;
 	[Obsolete] public Color chromaticity;  //chromaticity of object in CIE D65 space
-	[Range(0,360)] public float hue;
+	[Obsolete] [Range(0,360)] public float hue;
 
 	public int[] GetTypes()
 	{

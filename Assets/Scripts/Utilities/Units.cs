@@ -22,6 +22,12 @@ public class Quantity
 		Unit = unit;
 		this.isStatic = isStatic;
 	}
+	public Quantity(Quantity quantity)
+	{
+		this.amount = quantity.amount;
+		this.Unit = quantity.Unit;
+		this.isStatic = quantity.isStatic;
+	}
 
 	public override string ToString()
 	{
@@ -112,11 +118,11 @@ public class Quantity
 	{
 		return a / b.amount;
 	}
-	/// <returns>Value of Quantity in metres</returns>
 	public static implicit operator float(Quantity quantity)
 	{
-		quantity.Convert(Length.Unit.m);
-		return quantity.amount;
+		Quantity q = new Quantity(quantity);
+		q.Convert(Length.defaultUnit);
+		return q.amount;
 	}
 	#endregion
 

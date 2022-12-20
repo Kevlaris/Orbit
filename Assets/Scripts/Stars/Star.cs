@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,22 +12,31 @@ public class Star : CelestialBody
 	public float solarLuminosity;
 	public float absoluteMagnitude;
 	public float temperature;
-	GameObject particlePrefab;
+
+	GameObject particle;
+	float particleScale;	// scale of particle systems in solar radii
 
 	Material mat;
-	StellarClassification.StellarClass stellarClass;
+	public StellarClassification.StellarClass stellarClass;
 
 	private void Reset()
 	{
 		base.radius.Unit = Length.Unit.km;
 		base.radius.isStatic = true;
+		particleScale = solarRadius;
+		Destroy(particle);
+		particle = null;
+		if (!particle)
+		{
+			particle = GetComponentInChildren<ParticleSystem>().gameObject;
+		}
 	}
 
 	private void OnValidate()
 	{
 		base.radius.Unit = Length.Unit.km;
 		base.radius.isStatic = true;
-		base.radius.amount = solarRadius * Universe.solarRadius.amount;
+		base.radius.amount = solarRadius * Universe.solarRadius;
 		mass = Mathf.Pow(Universe.lengthScale, 3) * (surfaceGravity * Mathf.Pow(Length.Convert(radius, Length.Unit.m).amount, 2) / Universe.gravitationalConstant);
 		meshHolder = transform.GetChild(0);
 		meshHolder.localScale = 2 * Length.ConvertToWorld(radius) * Vector3.one;
@@ -40,14 +50,19 @@ public class Star : CelestialBody
 		rb.mass = mass;
 		rb.useGravity = false;
 
-		particlePrefab = Universe.solarParticleStandard;
+		particleScale = solarRadius;
+		if (!particle)
+		{
+			ParticleSystem query = GetComponentInChildren<ParticleSystem>();
+			if (query != null) particle = query.gameObject;
+		}
 	}
 
 	private void Start()
 	{
 		mat = meshHolder.GetComponent<MeshRenderer>().material;
 		mat.EnableKeyword("_EMISSION");
-		stellarClass = StellarClassification.Classify(temperature, solarLuminosity * Universe.solarLuminosity);
+		stellarClass = GetClass();
 		//chromaticity = stellarClass.SpectralClass.chromaticity;
 		//hue = stellarClass.SpectralClass.hue;
 		CalibrateParticleSystems();
@@ -62,40 +77,49 @@ public class Star : CelestialBody
 		mat.SetColor("_EmissionColor", chromaticity);
 	}
 
-	void CalibrateParticleSystems()
+	private void OnApplicationQuit()
 	{
-		ScaleParticleSystems(new Quantity(solarRadius * Universe.solarRadius, Length.Unit.km));
+		Destroy(particle);
+		particle = null;
+	}
+
+	public StellarClassification.StellarClass GetClass()
+	{
+		stellarClass = StellarClassification.Classify(temperature, solarLuminosity * Universe.solarLuminosity);
+		return stellarClass;
+	}
+
+	#region Particles
+
+	public void CalibrateParticleSystems()
+	{
+		LoadParticleSystem();
+
+		ParticleSystem[] particleSystems = GetParticleSystems(particle);
+		for (int i = 0; i < particleSystems.Length; i++)
+		{
+			var shape = particleSystems[i].shape;
+			shape.meshRenderer = meshHolder.GetComponent<MeshRenderer>();
+		}
+
+		ScaleParticleSystems(solarRadius);
 		//ColorParticleSystems(hue);
 	}
 
-	public void ScaleParticleSystems(Quantity radius)
+	public void ScaleParticleSystems(float solarRadius)
 	{
-		particlePrefab = Universe.solarParticleStandard;
-		float multiplier = Length.Convert(radius, Length.Unit.km).amount / Length.Convert(Universe.solarRadius, Length.Unit.km).amount;
+		float multiplier = solarRadius / particleScale;
 
-		// prefab particle systems
-		ParticleSystem surfacePrefab = particlePrefab.GetComponent<ParticleSystem>();
-		ParticleSystem coronaPrefab = particlePrefab.transform.GetChild(0).GetComponent<ParticleSystem>();
-		ParticleSystem flaresPrefab = particlePrefab.transform.GetChild(1).GetComponent<ParticleSystem>();
-		// actual particle systems
-		GetParticleSystems(out ParticleSystem surface, out ParticleSystem corona, out ParticleSystem flares);
+		ParticleSystem[] particleSystems = GetParticleSystems();
 
-		ParticleSystem.MinMaxCurve startSpeed, startSize;
-
-		ScaleParticleSystem(surfacePrefab, multiplier, out startSpeed, out startSize);
-		var surfaceMain = surface.main;
-		surfaceMain.startSpeed = startSpeed;
-		surfaceMain.startSize = startSize;
-
-		ScaleParticleSystem(coronaPrefab, multiplier, out startSpeed, out startSize);
-		var coronaMain = corona.main;
-		coronaMain.startSpeed = startSpeed;
-		coronaMain.startSize = startSize;
-
-		ScaleParticleSystem(flaresPrefab, multiplier, out startSpeed, out startSize);
-		var flaresMain = flares.main;
-		flaresMain.startSpeed = startSpeed;
-		flaresMain.startSize = startSize;
+		for (int i = 0; i < particleSystems.Length; i++)
+		{
+			ScaleParticleSystem(particleSystems[i], multiplier, out ParticleSystem.MinMaxCurve startSpeed, out ParticleSystem.MinMaxCurve startSize);
+			var main = particleSystems[i].main;
+			main.startSpeed = startSpeed;
+			main.startSize = startSize;
+		}
+		particleScale = solarRadius;
 	}
 
 	/// <summary>
@@ -137,13 +161,52 @@ public class Star : CelestialBody
 		}
 	}
 
+	[Obsolete]
 	void GetParticleSystems(out ParticleSystem surface, out ParticleSystem corona, out ParticleSystem flares)
 	{
 		surface = transform.GetChild(1).GetComponent<ParticleSystem>();
 		corona = transform.GetChild(1).GetChild(0).GetComponent<ParticleSystem>();
 		flares = transform.GetChild(1).GetChild(1).GetComponent<ParticleSystem>();
 	}
+	ParticleSystem[] GetParticleSystems()
+	{
+		return GetComponentsInChildren<ParticleSystem>(false);
+	}
+	ParticleSystem[] GetParticleSystems(GameObject gameObject)
+	{
+		return gameObject.GetComponentsInChildren<ParticleSystem>(false);
+	}
 
+	public void LoadParticleSystem()
+	{
+		GetClass();
+		if (particle) UnloadParticleSystem();
+		GameObject particleObject = Resources.Load<GameObject>("Stars/Particles/" + stellarClass.SpectralClass.letter);
+		if (!particleObject)
+		{
+			particleObject = Universe.solarParticleStandard;
+		}
+		particle = Instantiate(particleObject, transform);
+	}
+	public GameObject GetParticleObject()
+	{
+		if (!particle)
+		{
+			ParticleSystem query = GetComponentInChildren<ParticleSystem>();
+			if (query != null) particle = query.gameObject;
+		}
+		return particle;
+	}
+	public void UnloadParticleSystem()
+	{
+		if (!particle) return;
+#if UNITY_EDITOR
+		DestroyImmediate(particle);
+#else
+		Destroy(particle);
+#endif
+		particle = null;
+	}
 
 	/*
 	/// <param name="hue">Hue component of color [0-360]</param>
@@ -179,4 +242,5 @@ public class Star : CelestialBody
 		colorOverLifetime.gradient = gradient;
 	}
 	*/
+#endregion
 }
