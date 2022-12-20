@@ -247,8 +247,12 @@ MonoBehaviour:
   initialVelocity: {x: 0, y: 0, z: 0}
   chromaticity: {r: 0.6037736, g: 0.3619992, b: 0.2187255, a: 0}
   solarRadius: 1
+<<<<<<< Updated upstream
   solarLuminosity: 1.0000001
   absoluteMagnitude: 4.864
+=======
+  luminosity: 1
+>>>>>>> Stashed changes
   temperature: 5772
 --- !u!54 &1076590116905133099
 Rigidbody:
@@ -278,6 +282,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1076590116349726563}
     - target: {fileID: 817284664603791641, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+<<<<<<< Updated upstream
       propertyPath: ColorModule.gradient.maxGradient.key0.g
       value: 0.23529413
       objectReference: {fileID: 0}
@@ -292,12 +297,29 @@ PrefabInstance:
     - target: {fileID: 817284664603791641, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key1.r
       value: 0.8784314
+=======
+      propertyPath: InitialModule.startSize.scalar
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284664603791641, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284664603791641, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284664603791641, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 1
+>>>>>>> Stashed changes
       objectReference: {fileID: 0}
     - target: {fileID: 817284664915192266, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
       propertyPath: ShapeModule.m_MeshRenderer
       value: 
       objectReference: {fileID: 1076590116349726563}
     - target: {fileID: 817284664915192266, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+<<<<<<< Updated upstream
       propertyPath: ColorModule.gradient.maxGradient.atime1
       value: 9830
       objectReference: {fileID: 0}
@@ -328,6 +350,18 @@ PrefabInstance:
     - target: {fileID: 817284664915192266, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key1.r
       value: 0.85
+=======
+      propertyPath: InitialModule.startSize.scalar
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284664915192266, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 0.099999994
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284664915192266, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 150
+>>>>>>> Stashed changes
       objectReference: {fileID: 0}
     - target: {fileID: 817284664915192267, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
       propertyPath: m_RootOrder
@@ -382,6 +416,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1076590116349726563}
     - target: {fileID: 817284666577563072, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+<<<<<<< Updated upstream
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 50
       objectReference: {fileID: 0}
@@ -416,6 +451,18 @@ PrefabInstance:
     - target: {fileID: 817284666577563072, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.m_NumAlphaKeys
       value: 4
+=======
+      propertyPath: InitialModule.startSize.scalar
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284666577563072, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 817284666577563072, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 250
+>>>>>>> Stashed changes
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25958fd4789dedd45bacb456e4748d0e, type: 3}
