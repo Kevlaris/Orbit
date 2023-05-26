@@ -1,18 +1,18 @@
+using System;
 using UnityEngine;
 
 public class PlaceInOrbit : MonoBehaviour
 {
 	public CelestialBody centralBody;
 	CelestialBody body;
-	[SerializeField] OrbitVisualiser visualizer;
 	public Quantity distance = new Quantity(0, Length.Unit.km, true);
 	public float eccentricity;
 	public Quantity semiMajorAxis;
 	public Quantity semiMinorAxis;
-	public Quantity perihelion;		//smallest distance between two objects
-	public Quantity aphelion;       //longest distance between two objects
-	public float theta = 0;			//the angle between the major axis of the ellipse and the position of the object in the orbit
-	public float phi = 0;           //the angle between the XY axis and the plane of the orbit
+	[Tooltip("Shortest distance between body and central body")] public Quantity perihelion;
+	[Tooltip("Longest distance between body and central body")]  public Quantity aphelion;
+	[Tooltip("The angle between the major axis of the ellipse and the position of the object")] public float theta = 0;
+	[Tooltip("Inclination (the angle between the XZ axis and the plane of the orbit)")] public float phi = 0;
 	[Space]
 	public Vector3 initialVelocity;
 
@@ -33,32 +33,12 @@ public class PlaceInOrbit : MonoBehaviour
 
 		body = transform.GetComponent<CelestialBody>();
 
-		semiMajorAxis = CalculateSemiMajorAxis(perihelion, eccentricity);
-		semiMinorAxis = CalculateSemiMinorAxis(semiMajorAxis, eccentricity);
-		//perihelion = CalculatePerihelion(semiMajorAxis, eccentricity);
-		aphelion = CalculateAphelion(semiMajorAxis, eccentricity);
-		transform.position = new Vector3(centralBody.transform.position.x + Length.ConvertToWorld(perihelion), transform.position.y, transform.position.z);
-	}
-
-	private void Start()
-	{
-		body.Init(CalculateRequiredVelocity(semiMajorAxis, semiMinorAxis, theta, phi, centralBody.mass));
+		Recalculate();
 	}
 
 	private void Update()
 	{
 		distance = Length.ConvertFromWorld((transform.position - centralBody.transform.position).magnitude, Length.Unit.km);
-	}
-
-	private void OnValidate()
-	{
-		initialVelocity = CalculateRequiredVelocity(semiMajorAxis, semiMinorAxis, theta, phi, centralBody.mass);
-		semiMajorAxis = CalculateSemiMajorAxis(perihelion, eccentricity);
-		semiMinorAxis = CalculateSemiMinorAxis(semiMajorAxis, eccentricity);
-		visualizer.a = semiMajorAxis;
-		visualizer.b = semiMinorAxis;
-		visualizer.angle = phi;
-		visualizer.velocity = initialVelocity;
 	}
 
 	/// <summary>
@@ -84,12 +64,12 @@ public class PlaceInOrbit : MonoBehaviour
 		return velocity;
 	}
 	/// <summary>
-	/// Calculates the initial velocity required to maintain a given elliptical orbit around a body and returns the x and y components of the velocity relative to the center body
+	/// Calculates the initial velocity required to maintain a given elliptical orbit around a body and returns the velocity relative to the center body
 	/// </summary>
 	/// <param name="a">the semi-major axis of the ellipse (distance from the center of the body to one focus)</param>
 	/// <param name="b">the semi-minor axis of the ellipse (distance from the center of the body to the other focus)</param>
 	/// <param name="theta">the angle between the major axis of the ellipse and the position of the object in the orbit</param>
-	/// <param name="phi">the angle between the XY axis and the plane of the orbit</param>
+	/// <param name="phi">the angle between the XZ axis and the plane of the orbit</param>
 	/// <param name="mass">the mass of the body being orbited</param>
 	// source: ChatGPT
 	public static Vector3 CalculateRequiredVelocity(Quantity a, Quantity b, float theta, float phi, float mass)
@@ -112,7 +92,21 @@ public class PlaceInOrbit : MonoBehaviour
 		return new Vector3(x, y, z);
 	}
 
-	public static float CalculateEccentricity(Quantity aphelion, Quantity perihelion)
+	public static Vector3 V(Quantity _a, Quantity _p, float phi, float _mass)
+	{
+		Quantity a = Length.Convert(_a, Length.Unit.m);
+		Quantity p = Length.Convert(_p, Length.Unit.m);
+
+		// Calculate the required initial velocity
+		float initialVelocity = Mathf.Sqrt(Universe.gravitationalConstant * (_mass / Universe.lengthScale) / p);
+
+		// Create a Vector3 object with initial velocity in the x-axis
+		Vector3 velocity = new(0f, 0f, initialVelocity);
+
+		return velocity;
+	}
+
+public static float CalculateEccentricity(Quantity aphelion, Quantity perihelion)
 	{
 		if (perihelion > aphelion)
 		{
@@ -168,5 +162,33 @@ public class PlaceInOrbit : MonoBehaviour
 		Quantity majorAxis = new Quantity(semiMajorAxis*2, semiMajorAxis.Unit);
 		Quantity minorAxis = new Quantity(majorAxis * Mathf.Sqrt(1 - Mathf.Pow(eccentricity, 2)), majorAxis.Unit);
 		return new Quantity(minorAxis / 2, minorAxis.Unit);
+	}
+
+	public void Recalculate()
+	{
+		if (body == null) body = transform.GetComponent<CelestialBody>();
+
+		if (perihelion > aphelion)
+		{
+			(perihelion, aphelion) = (aphelion, perihelion);	//swap if perihelion is bigger
+		}
+
+		if (perihelion != 0 && aphelion != 0) eccentricity = CalculateEccentricity(aphelion, perihelion);
+
+		semiMajorAxis = CalculateSemiMajorAxis(perihelion, eccentricity);
+		semiMinorAxis = CalculateSemiMinorAxis(semiMajorAxis, eccentricity);
+
+		//initialVelocity = CalculateRequiredVelocity(semiMajorAxis, semiMinorAxis, theta, phi, centralBody.mass);
+		initialVelocity = V(semiMajorAxis, perihelion, phi, centralBody.mass);
+	}
+
+	public void SetParameters()
+	{
+		Recalculate();
+		Quantity x = new(perihelion.amount * Mathf.Cos(Mathf.Deg2Rad * phi), perihelion.Unit);
+		Quantity y = new(perihelion.amount * Mathf.Sin(Mathf.Deg2Rad * phi), perihelion.Unit);
+		Debug.Log($"x={x}; y={y}; sin={Mathf.Sin(Mathf.Deg2Rad * phi)}");
+		transform.position = new Vector3(centralBody.transform.position.x + Length.ConvertToWorld(x), centralBody.transform.position.y + Length.ConvertToWorld(y), centralBody.transform.position.z);
+		body.initialVelocity = initialVelocity;
 	}
 }

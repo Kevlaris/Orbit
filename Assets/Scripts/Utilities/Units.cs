@@ -38,7 +38,10 @@ public class Quantity
 
 	public void Convert(Length.Unit unit)
 	{
-		if (isStatic) return;
+		if (isStatic)
+		{
+			throw new InvalidOperationException("Unit of static Quantity can't be changed");
+		}
 		Quantity newQuantity = Length.Convert(this, unit);
 		this.amount = newQuantity.amount;
 		Unit = newQuantity.Unit;
@@ -120,9 +123,7 @@ public class Quantity
 	}
 	public static implicit operator float(Quantity quantity)
 	{
-		Quantity q = new Quantity(quantity);
-		q.Convert(Length.defaultUnit);
-		return q.amount;
+		return Length.Convert(quantity, Length.defaultUnit).amount;
 	}
 	#endregion
 
@@ -221,15 +222,14 @@ public static class Length
 		}
 		else
 		{
-			Quantity newQuantity = quantity;
-			quantity.Convert(defaultUnit);
+			Quantity newQuantity = Convert(quantity, defaultUnit);
 			return newQuantity * Universe.lengthScale;
 		}
 	}
 	public static Quantity ConvertFromWorld(float value, Unit unit)
 	{
 		float newValue = value / Universe.lengthScale;
-		Quantity quantity = new Quantity(newValue, Unit.km);
+		Quantity quantity = new Quantity(newValue, defaultUnit);
 		quantity.Convert(unit);
 		return quantity;
 	}

@@ -122,8 +122,8 @@ public class OrbitDebugDisplay : MonoBehaviour
                 continue;
             }
             Vector3 forceDir = (virtualBodies[j].position - virtualBodies[i].position).normalized;
-            float sqrDst = Length.ConvertFromWorld((virtualBodies[j].position - virtualBodies[i].position).sqrMagnitude, Length.Unit.m).amount;
-            acceleration += forceDir * Universe.gravitationalConstant * virtualBodies[j].mass / Universe.lengthScale / sqrDst;
+            float sqrDst = Length.ConvertFromWorld((virtualBodies[j].position - virtualBodies[i].position).sqrMagnitude, Length.Unit.km).amount;
+            acceleration += Universe.gravitationalConstant * virtualBodies[j].mass * forceDir / Universe.lengthScale / sqrDst;
         }
         return acceleration;
     }
@@ -136,7 +136,7 @@ public class OrbitDebugDisplay : MonoBehaviour
         for (int bodyIndex = 0; bodyIndex < bodies.Length; bodyIndex++)
         {
             var lineRenderer = bodies[bodyIndex].gameObject.GetComponentInChildren<LineRenderer>();
-            lineRenderer.positionCount = 0;
+            if (lineRenderer != null) lineRenderer.positionCount = 0;
         }
     }
 
