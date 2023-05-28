@@ -14,7 +14,7 @@ public class Star : CelestialBody
 	public float temperature;
 
 	GameObject particle;
-	float particleScale;	// scale of particle systems in solar radii
+	public float particleScale;	// scale of particle systems in solar radii
 
 	Material mat;
 	public StellarClassification.StellarClass stellarClass;
@@ -187,6 +187,7 @@ public class Star : CelestialBody
 			particleObject = Universe.solarParticleStandard;
 		}
 		particle = Instantiate(particleObject, transform);
+		particle.name = "Particle System " + particleObject.name;
 	}
 	public GameObject GetParticleObject()
 	{

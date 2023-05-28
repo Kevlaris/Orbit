@@ -140,12 +140,11 @@ public class StarEditor : Editor
 
 	void SaveParticles()
 	{
-		string localPath = "Assets/Resources/Stars/Particles/" + StellarClassification.ClassString(stellarClass) + ".prefab";
-		localPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
+		string localPath = "Assets/Resources/Stars/Particles/" + stellarClass.SpectralClass.letter + ".prefab";
 		GameObject particleObject = ((Star)target).GetParticleObject();
 		if (!particleObject) return;
-		PrefabUtility.SaveAsPrefabAsset(((Star)target).transform.GetChild(1).gameObject, localPath, out bool success);
-		if (!success) Debug.LogWarning("Can't save particle system");
+		PrefabUtility.SaveAsPrefabAsset(particleObject, localPath, out bool success);
+		if (!success) Debug.LogError("Can't save particle system");
 	}
 	void ReloadParticles()
 	{
