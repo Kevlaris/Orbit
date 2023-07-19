@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PlaceInOrbit : MonoBehaviour
 {
-	public CelestialBody centralBody;
-	CelestialBody body;
+	public GravityBody centralBody;
+	GravityBody body;
 	public Quantity distance = new Quantity(0, Length.Unit.km, true);
 	public float eccentricity;
 	public Quantity semiMajorAxis;
@@ -18,7 +18,7 @@ public class PlaceInOrbit : MonoBehaviour
 
 	private void Reset()
 	{
-		body = transform.GetComponent<CelestialBody>();
+		body = transform.GetComponent<GravityBody>();
 	}
 
 	private void Awake()
@@ -27,11 +27,11 @@ public class PlaceInOrbit : MonoBehaviour
 		float velocity = CalculateRequiredVelocity(centralBody, altitude);
 		Debug.Log(velocity);
 		transform.position = new Vector3(centralBody.Position.x + Length.ConvertToWorld(altitude), transform.position.y, transform.position.z);
-		var body = transform.GetComponent<CelestialBody>();
+		var body = transform.GetComponent<GravityBody>();
 		body.initialVelocity = new Vector3(0, 0, velocity);
 		*/
 
-		body = transform.GetComponent<CelestialBody>();
+		body = transform.GetComponent<GravityBody>();
 
 		Recalculate();
 	}
@@ -45,7 +45,7 @@ public class PlaceInOrbit : MonoBehaviour
 	/// Calculate required orbital velocity for stable circular orbit around central body
 	/// </summary>
 	/// <returns>Orbital velocity in world units</returns>
-	public static float CalculateRequiredVelocity(CelestialBody centralBody, Quantity desiredAltitude)
+	public static float CalculateRequiredVelocity(GravityBody centralBody, Quantity desiredAltitude)
 	{
 		desiredAltitude.Convert(Length.Unit.m); // convert to metres
 		float velocity = Mathf.Sqrt(Universe.gravitationalConstant * (centralBody.mass / Universe.lengthScale) / (Length.Convert(centralBody.radius, Length.Unit.m) + desiredAltitude));
@@ -56,7 +56,7 @@ public class PlaceInOrbit : MonoBehaviour
 	/// </summary>
 	/// <param name="distance">Distance between the two objects</param>
 	/// <returns>Orbital velocity in world units</returns>
-	public static float CalculateRequiredVelocity(CelestialBody centralBody, Quantity distance, Quantity semiMajorAxis)
+	public static float CalculateRequiredVelocity(GravityBody centralBody, Quantity distance, Quantity semiMajorAxis)
 	{
 		distance.Convert(Length.Unit.m); // convert to metres
 		semiMajorAxis.Convert(Length.Unit.m);
@@ -166,7 +166,7 @@ public static float CalculateEccentricity(Quantity aphelion, Quantity perihelion
 
 	public void Recalculate()
 	{
-		if (body == null) body = transform.GetComponent<CelestialBody>();
+		if (body == null) body = transform.GetComponent<GravityBody>();
 
 		if (perihelion > aphelion)
 		{
