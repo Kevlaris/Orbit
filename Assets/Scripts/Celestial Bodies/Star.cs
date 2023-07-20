@@ -21,8 +21,10 @@ public class Star : CelestialBody
 	Material mat;
 	public StellarClassification.StellarClass stellarClass;
 
-	private void Reset()
+	protected override void Reset()
 	{
+		base.Reset();
+
 		base.radius.Unit = Length.Unit.km;
 		base.radius.isStatic = true;
 		particleScale = solarRadius;
@@ -35,8 +37,10 @@ public class Star : CelestialBody
 		icon = Icon;
 	}
 
-	private void OnValidate()
+	protected override void OnValidate()
 	{
+		base.OnValidate();
+
 		radius.Unit = Length.Unit.km;
 		radius.isStatic = true;
 		radius.amount = solarRadius * Universe.solarRadius;
@@ -49,8 +53,10 @@ public class Star : CelestialBody
 		Icon = icon;
 	}
 
-	private void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		velocity = initialVelocity;
 		rb = GetComponent<Rigidbody>();
 		rb.mass = mass;
@@ -67,6 +73,7 @@ public class Star : CelestialBody
 	protected override void Start()
 	{
 		base.Start();
+
 		Debug.Log("asd");
 		mat = meshHolder.GetComponent<MeshRenderer>().sharedMaterial;
 		mat.EnableKeyword("_EMISSION");

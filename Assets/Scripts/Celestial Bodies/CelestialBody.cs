@@ -9,8 +9,9 @@ public abstract class CelestialBody : GravityBody
 	public Sprite Icon { get; protected set; }
 	public int ID {  get; private set; }
 
-	protected virtual void Start()
+	protected override void Start()
 	{
+		base.Start();
 		FetchID();
 	}
 

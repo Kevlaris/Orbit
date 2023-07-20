@@ -6,19 +6,22 @@ public class Planet : CelestialBody
 {
 	[SerializeField] Sprite icon;
 
-	private void Reset()
+	protected override void Reset()
 	{
+		base.Reset();
 		icon = Icon;
 	}
 
-	private void OnValidate()
+	protected override void OnValidate()
 	{
+		base.OnValidate();
 		Name = gameObject.name;
 		Icon = icon;
 	}
 
-	private void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
 		Description = "bolygó";
 	}
 }

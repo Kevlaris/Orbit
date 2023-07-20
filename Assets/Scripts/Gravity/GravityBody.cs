@@ -8,13 +8,13 @@ public class GravityBody : MonoBehaviour
     public float surfaceGravity;
 	public float mass { get; protected set; }
     public Vector3 initialVelocity;
-	public Vector3 velocity { get; protected set; }
+	public Vector3 velocity; //{ get; protected set; }
 	protected Transform meshHolder;
 	protected Rigidbody rb;
 
 	public bool init = false;
 
-	private void Awake()
+	protected virtual void Awake()
 	{
 		rb = GetComponent<Rigidbody>();
 		rb.mass = mass;
@@ -22,19 +22,24 @@ public class GravityBody : MonoBehaviour
 		if (init) velocity = initialVelocity;
 	}
 
-	private void Reset()
+	protected virtual void Reset()
 	{
 		radius.Unit = Length.Unit.km;
 		radius.isStatic = true;
 	}
 
-	void OnValidate()
+	protected virtual void OnValidate()
 	{
 		radius.Unit = Length.Unit.km;
 		radius.isStatic = true;
 		mass = Mathf.Pow(Universe.lengthScale, 3) * (surfaceGravity * Mathf.Pow(Length.Convert(radius, Length.Unit.m).amount, 2) / Universe.gravitationalConstant);
 		meshHolder = transform.GetChild(0);
 		meshHolder.localScale = Vector3.one * Length.ConvertToWorld(radius) * 2;
+	}
+
+	protected virtual void Start()
+	{
+		if (!init) Init(initialVelocity);
 	}
 
 	public void Init(Vector3 velocity)
