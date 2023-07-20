@@ -26,7 +26,7 @@ public class QuantityDrawer : PropertyDrawer
 			Rect upButtonRect = new Rect(position.x + amountRect.width + unitRect.width + 5, position.y, 30, position.height);
 			Rect downButtonRect = new Rect(position.x + amountRect.width + unitRect.width + upButtonRect.width + 5, position.y, 30, position.height);
 
-			GUIContent upArrow = new GUIContent(Resources.Load<Texture>("Textures/up"));
+			GUIContent upArrow = new GUIContent(Resources.Load<Texture>("Textures/UI/up"));
 			if (unitNum + 1 < Enum.GetNames(typeof(Length.Unit)).Length)
 			{
 				if (GUI.Button(upButtonRect, upArrow))
@@ -41,7 +41,7 @@ public class QuantityDrawer : PropertyDrawer
 				GUI.Label(upButtonRect, upArrow);
 			}
 
-			GUIContent downArrow = new GUIContent(Resources.Load<Texture>("Textures/down"));
+			GUIContent downArrow = new GUIContent(Resources.Load<Texture>("Textures/UI/down"));
 			if (unitNum - 1 >= 0)
 			{
 				if (GUI.Button(downButtonRect, downArrow))

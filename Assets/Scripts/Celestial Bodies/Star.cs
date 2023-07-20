@@ -74,7 +74,6 @@ public class Star : CelestialBody
 	{
 		base.Start();
 
-		Debug.Log("asd");
 		mat = meshHolder.GetComponent<MeshRenderer>().sharedMaterial;
 		mat.EnableKeyword("_EMISSION");
 		stellarClass = GetClass();

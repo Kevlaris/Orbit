@@ -85,7 +85,7 @@ public class GravityBody : MonoBehaviour
 	public void UpdatePosition(float timeStep)
 	{
 		if (!init) return;
-		rb.MovePosition(rb.position + velocity * timeStep);
-		//rb.velocity = velocity;
+		//rb.MovePosition(rb.position + velocity * timeStep);
+		rb.velocity = velocity;
 	}
 }
