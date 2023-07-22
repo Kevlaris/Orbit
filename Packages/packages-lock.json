@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.noha-software.utils": {
-      "version": "file:C:/Users/team3/Documents/Unity/NohaSoftUtils",
+      "version": "file:NohaSoftUtils",
       "depth": 0,
-      "source": "local",
+      "source": "embedded",
       "dependencies": {}
     },
     "com.unity.collab-proxy": {

@@ -1,5 +1,5 @@
+using NohaSoftware.Utilities;
 using System;
-using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,10 +16,12 @@ public class Star : CelestialBody
 	public float temperature;
 
 	GameObject particle;
-	public float particleScale;	// scale of particle systems in solar radii
+	public float particleScale; // scale of particle systems in solar radii
 
 	Material mat;
+
 	public StellarClassification.StellarClass stellarClass;
+	public SerializableTuple<Quantity, Quantity> habitableZone;	// inner, outer edge
 
 	protected override void Reset()
 	{
@@ -77,6 +79,8 @@ public class Star : CelestialBody
 		mat = meshHolder.GetComponent<MeshRenderer>().sharedMaterial;
 		mat.EnableKeyword("_EMISSION");
 		stellarClass = GetClass();
+		habitableZone = CalculateHabitableZone();
+
 		//chromaticity = stellarClass.SpectralClass.chromaticity;
 		//hue = stellarClass.SpectralClass.hue;
 		CalibrateParticleSystems();
@@ -102,6 +106,14 @@ public class Star : CelestialBody
 		stellarClass = StellarClassification.Classify(temperature, solarLuminosity * Universe.solarLuminosity);
 		Description = StellarClassification.ClassString(stellarClass) + " típusú csillag";
 		return stellarClass;
+	}
+
+	Tuple<Quantity, Quantity> CalculateHabitableZone()
+	{
+		float inner = (float)Math.Round((decimal)Mathf.Sqrt(solarLuminosity / 1.1f), 3);
+		float outer = (float)Math.Round((decimal)Mathf.Sqrt(solarLuminosity / 0.53f), 3);
+		Debug.Log($"Habitable zone of {Name} ({StellarClassification.ClassString(stellarClass)}): {inner} - {outer} AU");
+		return Tuple.Create(new Quantity(inner, Length.Unit.AU), new Quantity(outer, Length.Unit.AU));
 	}
 
 	#region Particles
@@ -258,5 +270,14 @@ public class Star : CelestialBody
 		colorOverLifetime.gradient = gradient;
 	}
 	*/
-#endregion
+	#endregion
+
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireSphere(transform.position, Length.ConvertToWorld(habitableZone.Key));
+
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawWireSphere(transform.position, Length.ConvertToWorld(habitableZone.Value));
+	}
 }
