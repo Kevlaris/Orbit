@@ -272,7 +272,7 @@ public class Star : CelestialBody
 	*/
 	#endregion
 
-	private void OnDrawGizmos()
+	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.position, Length.ConvertToWorld(habitableZone.Key));

@@ -69,7 +69,7 @@ public class GravityBody : MonoBehaviour
 
 				float sqrDst = Length.ConvertFromWorld((body.transform.position - transform.position).sqrMagnitude, Length.Unit.m).amount;
 				Vector3 forceDir = (body.transform.position - transform.position).normalized;
-				Vector3 acceleration = forceDir * Universe.gravitationalConstant * body.mass / Universe.lengthScale / sqrDst;
+				Vector3 acceleration = body.mass * Universe.gravitationalConstant * forceDir / Universe.lengthScale / sqrDst;
 
 				velocity += acceleration * timeStep;
 			}
