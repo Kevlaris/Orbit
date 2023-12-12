@@ -5,7 +5,7 @@ using UnityEngine;
 public class LockCamera : MonoBehaviour
 {
     public bool focus;
-    public CelestialBody focusObject;
+    public GravityBody focusObject;
     void Update()
     {
 		if (focus)

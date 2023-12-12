@@ -9,11 +9,9 @@ public class OrbitDebugDisplay : MonoBehaviour
 	public bool usePhysicsTimeStep;
 
 	public bool relativeToBody;
-	public CelestialBody centralBody;
+	public GravityBody centralBody;
 	public float width = 100;
 	public bool useThickLines;
-
-	public CelestialBody planet;
 
 	void Start()
 	{
@@ -32,7 +30,7 @@ public class OrbitDebugDisplay : MonoBehaviour
 
 	void DrawOrbits()
 	{
-		CelestialBody[] bodies = FindObjectsOfType<CelestialBody>();
+		GravityBody[] bodies = FindObjectsOfType<GravityBody>();
 		var virtualBodies = new VirtualBody[bodies.Length];
 		var drawPoints = new Vector3[bodies.Length][];
 		int referenceFrameIndex = 0;
@@ -135,8 +133,7 @@ public class OrbitDebugDisplay : MonoBehaviour
 
 	void HideOrbits()
 	{
-		return;
-		CelestialBody[] bodies = FindObjectsOfType<CelestialBody>();
+		GravityBody[] bodies = FindObjectsOfType<GravityBody>();
 
 		// Draw paths
 		for (int bodyIndex = 0; bodyIndex < bodies.Length; bodyIndex++)
@@ -160,22 +157,11 @@ public class OrbitDebugDisplay : MonoBehaviour
 		public Vector3 velocity;
 		public float mass;
 
-		public VirtualBody(CelestialBody body)
+		public VirtualBody(GravityBody body)
 		{
 			position = body.transform.position;
 			velocity = body.initialVelocity * (Mathf.PI * 10);
 			mass = body.mass;
 		}
-	}
-
-	private void OnDrawGizmos()
-	{
-		Vector3 direction = planet.transform.position - centralBody.transform.position;
-		float distance = direction.magnitude;
-		Vector3 unitVector = direction / distance;
-		Vector3 gravForce = Universe.gravitationalConstant * ((centralBody.mass * planet.mass) / (distance * distance)) * unitVector;
-
-		Gizmos.color = Color.cyan;
-		Gizmos.DrawLine(planet.transform.position, planet.transform.position - gravForce);
 	}
 }

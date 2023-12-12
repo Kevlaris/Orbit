@@ -6,7 +6,7 @@ using UnityEngine;
 [CustomEditor(typeof(Star))]
 public class StarEditor : Editor
 {
-	SerializedProperty surfaceGravity, solarRadius, temperature, solarLuminosity, absoluteMagnitude, chromaticity;
+	SerializedProperty surfaceGravity, solarRadius, temperature, solarLuminosity, absoluteMagnitude, chromaticity, icon;
 	StellarClassification.StellarClass stellarClass;
 	bool useMagnitude = false;
 	float luminanceValue;
@@ -28,6 +28,7 @@ public class StarEditor : Editor
 		{
 			luminanceValue = solarLuminosity.floatValue;
 		}
+		icon = serializedObject.FindProperty("icon");
 		GetClass();
 	}
 
@@ -35,6 +36,8 @@ public class StarEditor : Editor
 	{
 		serializedObject.Update();
 		EditorGUILayout.BeginVertical();
+
+			EditorGUILayout.PropertyField(icon);
 
 			EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PropertyField(temperature);

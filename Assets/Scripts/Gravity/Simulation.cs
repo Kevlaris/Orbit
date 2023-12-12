@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Simulation : MonoBehaviour
 {
-    CelestialBody[] bodies;
+    GravityBody[] bodies;
     static Simulation instance;
 
     void Awake()
     {
 
-        bodies = FindObjectsOfType<CelestialBody>();
+        bodies = FindObjectsOfType<GravityBody>();
         Time.fixedDeltaTime = Universe.physicsTimeStep;
         Debug.Log("Setting fixedDeltaTime to: " + Universe.physicsTimeStep);
     }
@@ -31,7 +31,7 @@ public class Simulation : MonoBehaviour
 
     }
 
-    public static Vector3 CalculateAcceleration(Vector3 point, CelestialBody ignoreBody = null)
+    public static Vector3 CalculateAcceleration(Vector3 point, GravityBody ignoreBody = null)
     {
         Vector3 acceleration = Vector3.zero;
         foreach (var body in Instance.bodies)
@@ -47,7 +47,7 @@ public class Simulation : MonoBehaviour
         return acceleration;
     }
 
-    public static CelestialBody[] Bodies
+    public static GravityBody[] Bodies
     {
         get
         {
